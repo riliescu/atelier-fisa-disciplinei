@@ -103,10 +103,6 @@ textarea{resize:vertical;min-height:2.6rem}
 .preview .lead{color:var(--muted);font-style:italic}
 .preview .verb{font-weight:600;color:var(--green);border-bottom:3px solid var(--gold)}
 .preview .empty{color:var(--muted);opacity:.6}
-.pmline{font-size:1.05rem;line-height:1.45;margin:-6px 0 16px}
-.pmline b{font-weight:600}
-.pmline .muted{color:var(--muted)}
-.pmline .soft{display:block;color:var(--muted);font-style:italic;font-size:.92rem;margin-top:2px}
 .ladder{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-bottom:6px}
 .ladder div{border-radius:8px;padding:.45rem .3rem;text-align:center;font-size:.78rem;font-weight:600;color:var(--muted);background:var(--l1);border:2px solid transparent}
 .ladder div:nth-child(2){background:var(--l2)}.ladder div:nth-child(3){background:var(--l3)}.ladder div:nth-child(4){background:var(--l4)}.ladder div:nth-child(5){background:var(--l5)}.ladder div:nth-child(6){background:var(--l6)}
@@ -137,9 +133,6 @@ td input,td select{padding:.3rem .4rem;font-size:.88rem;background:var(--panel)}
 .stack{display:flex;flex-direction:column;gap:5px;min-width:15rem}
 td .w{width:4.5rem}
 .sum{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}
-.mnote,.rowsoft{color:var(--muted);font-style:italic;font-size:.92rem}
-.mnote{margin:10px 0 0}
-.rowsoft{display:block;font-size:.85rem;max-width:16rem}
 .checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:14px}
 .checks div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.92rem}
 .checks div.ok{border-color:var(--ok)} .checks div.todo{border-color:var(--gold)}
@@ -204,14 +197,14 @@ td .w{width:4.5rem}
         <div><label for="cod">Cod</label><input id="cod" autocomplete="off"></div>
         <div style="grid-column:span 2;position:relative"><label for="verb">Verbul</label><div class="vwrap"><input id="verb" placeholder="compară, explică, calculează…" autocomplete="off"><button type="button" id="vbtn" aria-expanded="false" aria-controls="vpanel" title="Alege verbul din listă">Alege ▾</button></div><div id="vback" class="vback" hidden></div><div id="vpanel" class="vpanel" role="dialog" aria-label="Alege verbul" hidden></div><div id="verbhint" class="hint">Un singur verb, la persoana a III-a: ce face studentul.</div></div>
       </div>
-      <div class="f"><label for="cont">Conținutul</label><textarea id="cont" rows="2" placeholder="clasele de medicamente din aceeași grupă terapeutică"></textarea></div>
-      <div class="f"><label for="ctx">Contextul sau criteriul</label><textarea id="ctx" rows="2" placeholder="după mecanismul de acțiune, efectele terapeutice și reacțiile adverse"></textarea></div>
+      <div class="f"><label for="cont">Conținutul</label><textarea id="cont" rows="2" placeholder="clasele de diuretice"></textarea></div>
+      <div class="f"><label for="ctx">Contextul sau criteriul</label><textarea id="ctx" rows="2" placeholder="după locul de acțiune în nefron, mecanism și efectul asupra potasemiei"></textarea></div>
       <div class="row">
         <div><label for="anexa">Anexa 2 ARACIS</label><input id="anexa" placeholder="RI 2 Medicină" autocomplete="off"></div>
         <div><label for="mil">Nivel Miller</label><select id="mil"><option>Știe</option><option>Știe cum</option><option>Arată cum</option><option>Face</option></select></div>
       </div>
       <div class="row">
-        <div><label for="met">Metoda principală (secț. 9)</label><select id="met"></select></div>
+        <div><label for="met">Metoda (secț. 9)</label><select id="met"></select></div>
         <div><label for="prb">Proba (secț. 11)</label><select id="prb"></select></div>
       </div>
       <div class="row">
@@ -228,7 +221,6 @@ td .w{width:4.5rem}
     <div class="card">
       <h2>Rezultatul învățării</h2>
       <p class="preview" id="preview"></p>
-      <p class="pmline" id="pmline" aria-live="polite"></p>
       <div class="mini" style="margin-bottom:6px">Nivelul cognitiv (Bloom revizuit, Anderson și Krathwohl, 2001)</div>
       <div class="ladder" id="ladder">
         <div>1 · a-și aminti</div><div>2 · a înțelege</div><div>3 · a aplica</div><div>4 · a analiza</div><div>5 · a evalua</div><div>6 · a crea</div>
@@ -258,11 +250,11 @@ td .w{width:4.5rem}
     <thead><tr><th>Cod</th><th>Rezultatul învățării</th><th>Bloom · Miller</th><th>Metoda (secț. 9) · proba și momentul (secț. 11)</th><th>Pondere</th><th>Anexa 2</th><th><span class="sr">Acțiuni</span></th></tr></thead>
     <tbody id="mbody"></tbody>
   </table></div>
-  <p class="mnote" id="mnote" hidden>Verificați alinierea pe fiecare rând: verbul, metoda și proba cer același lucru de la student?</p>
   <div class="checks" id="checks"></div>
   <div class="actions" style="margin-top:14px">
-    <button id="copy">Copiază matricea (pentru Word)</button>
-    <span class="mini">În Word se lipește ca tabel (Ctrl+V); în Excel, fiecare coloană intră în celula ei.</span>
+    <button class="primary" id="word">Descarcă Word</button>
+    <button id="copy">Copiază tabelul</button>
+    <span class="mini">Word: grupa afișată sau, pe „Toate grupele”, fiecare grupă pe pagina ei.</span>
   </div>
 </section>
 
@@ -319,9 +311,6 @@ const PROBES={
  "Face":["mini-CEX","DOPS","Discuție pe caz (CbD)","Feedback 360°","Portofoliu"],
  "RA":["Prezentare argumentată cu criterii publice","Observare cu fișă","Portofoliu","Feedback 360°","Reflecție scrisă"]
 };
-const PROBE_ALSO={"Știe cum":["OSPE"]}; /* stația OSPE de calcul verifică „știe cum” */
-function probeOff(cat,miller,proba){ if(!proba) return false; const k=cat==="RA"&&miller!=="Știe"&&miller!=="Știe cum"?"RA":miller;
-  const ok=(PROBES[k]||[]).concat(PROBE_ALSO[miller]||[], k==="RA"?(PROBES[miller]||[]):[]); return !ok.includes(proba); }
 const ALLPROBES=Array.from(new Set(Object.values(PROBES).flat()));
 const METHODS=["Prelegere interactivă","Clasă inversată","Învățare bazată pe caz (CBL)","Învățare bazată pe probleme (PBL)","Învățare în echipă (TBL)","Simulare","Abilități practice în 4 pași","Seminar cu caz","Lucrare practică de laborator","La patul bolnavului","Preceptorul într-un minut / SNAPPS","Reflecție scrisă","Feedback structurat","Proiect în echipă","Stagiu clinic"];
 const METHOD_BY_LEVEL={1:["Prelegere interactivă","Clasă inversată"],2:["Prelegere interactivă","Clasă inversată","Învățare bazată pe caz (CBL)"],3:["Lucrare practică de laborator","Abilități practice în 4 pași","Seminar cu caz","Simulare"],4:["Învățare bazată pe caz (CBL)","Învățare în echipă (TBL)","Învățare bazată pe probleme (PBL)"],5:["Învățare în echipă (TBL)","Învățare bazată pe caz (CBL)","Preceptorul într-un minut / SNAPPS"],6:["Proiect în echipă","Învățare bazată pe probleme (PBL)"]};
@@ -529,7 +518,7 @@ $$(".formula [data-go]").forEach(b=>b.addEventListener("click",()=>$("#"+b.datas
 ["verb","cont","ctx"].forEach(id=>{const el=$("#"+id); el.addEventListener("focus",()=>$$(".formula [data-go]").forEach(b=>b.classList.toggle("on",b.dataset.go===id))); el.addEventListener("blur",()=>$$(".formula [data-go]").forEach(b=>b.classList.remove("on")));});
 $("#millerbar").addEventListener("click",e=>{const d=e.target.closest("#millerbar div"); if(!d) return; $("#mil").value=d.textContent; millerTouched=true; update(true);});
 /* ---------- composer ---------- */
-function nextCode(){const g=$("#grupa").value; const n=RI.filter(r=>r.grupa===g&&r.cat===cat&&r.id!==editId).reduce((m,r)=>Math.max(m,parseInt(String(r.cod).replace(/\D+/g,""))||0),0)+1; return cat+n;}
+function nextCode(){const g=$("#grupa").value; const n=RI.filter(r=>r.grupa===g&&r.cat===cat&&r.id!==editId).length+1; return cat+n;}
 function setCat(c){cat=c; vlevel=null; $$("[data-cat]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cat===c?"true":"false")); if(!editId) $("#cod").value=nextCode(); millerTouched=false; update();}
 $$("[data-cat]").forEach(b=>b.onclick=()=>setCat(b.dataset.cat));
 $("#grupa").onchange=()=>{LS.set("atelier.grupa",$("#grupa").value); const g=$("#grupa").value; const last=RI.filter(r=>r.grupa===g).slice(-1)[0]; $("#disc").value=last?last.disc:""; if(!editId) $("#cod").value=nextCode(); };
@@ -541,8 +530,8 @@ function update(keepMiller){
   const d=detect(verb,cat);
   // preview sentence
   const p=$("#preview");
-  if(!verb&&!cont&&!ctx){p.innerHTML='<span class="lead">La final, studentul</span> <span class="empty">verb · conținut · context</span>';}
-  else{ let s=esc(cont)+(ctx?" "+esc(ctx):""); s=s.replace(/[.\s]+$/,""); p.innerHTML='<span class="lead">La final, studentul</span> <span class="verb">'+(esc(verb)||"…")+'</span> '+(s||'<span class="empty">conținut · context</span>')+'.'; }
+  if(!verb&&!cont&&!ctx){p.innerHTML='<span class="lead">La finalul disciplinei, studentul</span> <span class="empty">verb · conținut · context</span>';}
+  else{ let s=esc(cont)+(ctx?" "+esc(ctx):""); s=s.replace(/[.\s]+$/,""); p.innerHTML='<span class="lead">La finalul disciplinei, studentul</span> <span class="verb">'+(esc(verb)||"…")+'</span> '+(s||'<span class="empty">conținut · context</span>')+'.'; }
   // bloom ladder
   $$("#ladder div").forEach((el,i)=>el.classList.toggle("on",d.level===i+1));
   const h=$("#verbhint"), bt=$("#bloomtxt");
@@ -567,14 +556,6 @@ function update(keepMiller){
   const chipM=x=>{const c=(CUST_M[mkey]||[]).includes(x); return '<span class="cwrap"><button type="button" class="chip'+($("#met").value===x?" sel":"")+(c?" custom":"")+'" data-met="'+esc(x)+'">'+esc(x)+'</button>'+(c?'<button type="button" class="cdel" data-mdel="'+esc(x)+'" title="Scoate din listă" aria-label="Scoate '+esc(x)+'">✕</button>':'')+'</span>';};
   $("#smet").innerHTML=mets.map(chipM).join("")+'<span class="cadd"><input id="mnew" placeholder="altă metodă…" autocomplete="off"><button type="button" id="madd">+ Adaugă</button></span>';
   $("#sprb").dataset.key=pkey; $("#smet").dataset.key=mkey;
-  // chosen method and assessment, as they will appear in the matrix
-  const mv=$("#met").value, pv=$("#prb").value, mo=$("#mom").value, po=$("#pond").value;
-  let pm, off=false;
-  if(!mv&&!pv) pm='<span class="muted">Metoda și proba: alegeți-le în stânga sau din sugestii.</span>';
-  else{ pm='Se învață prin: '+(mv?'<b>'+esc(mv)+'</b>':'<span class="muted">metoda nealeasă</span>')+' · Se evaluează prin: '+(pv?'<b>'+esc(pv)+'</b>, '+esc(mo.toLowerCase())+(po!==""?', '+esc(po)+'%':''):'<span class="muted">proba nealeasă</span>');
-    off=probeOff(cat,m,pv); }
-  pm+='<span class="soft">Verificați alinierea: verbul, metoda și proba cer același lucru de la student?'+(off?' Proba aleasă se folosește de obicei la alt nivel decât „'+esc(m)+'”.':'')+'</span>';
-  $("#pmline").innerHTML=pm;
   $("#save").disabled=store.mode==="pending"||!verb||!cont;
 }
 $("#sprb").addEventListener("click",e=>{
@@ -587,13 +568,13 @@ $("#smet").addEventListener("click",e=>{
   const b=e.target.closest("[data-met]"); if(!b) return; $("#met").value=b.dataset.met; update(true);});
 $("#sprb").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.id==="pnew"){ e.preventDefault(); $("#padd").click(); } });
 $("#smet").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.id==="mnew"){ e.preventDefault(); $("#madd").click(); } });
-$("#prb").onchange=()=>update(true); $("#met").onchange=()=>update(true); $("#mom").onchange=()=>update(true); $("#pond").addEventListener("input",()=>update(true));
+$("#prb").onchange=()=>update(true); $("#met").onchange=()=>update(true);
 
 function clearForm(){["verb","cont","ctx","anexa","pond"].forEach(id=>$("#"+id).value=""); $("#met").value=""; $("#prb").value=""; $("#mom").value="Pe parcurs"; editId=null; millerTouched=false; $("#editing").hidden=true; $("#save").textContent="Adaugă în matrice"; $("#cod").value=nextCode(); update();}
 $("#clear").onclick=clearForm; $("#canceledit").onclick=clearForm;
-const EXAMPLES=[{"prog": "Medicină", "disc": "Farmacologie I", "anexa": "RI 2 Medicină", "items": [{"cat": "C", "verb": "compară", "cont": "clasele de medicamente din aceeași grupă terapeutică", "ctx": "după mecanismul de acțiune, efectele terapeutice și reacțiile adverse", "bloom": 2, "miller": "Știe cum", "proba": "Întrebări scurte pe caz", "metoda": "Învățare bazată pe caz (CBL)", "pond": 15}, {"cat": "A", "verb": "calculează", "cont": "regimul de dozare al unui medicament (doza de încărcare, doza de întreținere, intervalul)", "ctx": "pornind de la parametrii farmacocinetici dați într-un caz", "bloom": 3, "miller": "Știe cum", "proba": "OSPE", "metoda": "Învățare în echipă (TBL)", "pond": 20}, {"cat": "RA", "verb": "își argumentează", "cont": "în fața grupei alegerea unui medicament pentru un caz", "ctx": "cântărind beneficiul, riscul și interacțiunile", "bloom": 5, "miller": "Arată cum", "proba": "Prezentare argumentată cu criterii publice", "metoda": "Învățare bazată pe caz (CBL)", "pond": 10}]}, {"prog": "Medicină", "disc": "Cardiologie", "anexa": "RI 5 Medicină", "items": [{"cat": "C", "verb": "explică", "cont": "mecanismele fiziopatologice ale principalelor afecțiuni cardiovasculare", "ctx": "și legătura lor cu manifestările clinice", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "examinează", "cont": "aparatul cardiovascular al unui pacient standardizat", "ctx": "după protocolul de examinare clinică al disciplinei", "bloom": 3, "miller": "Arată cum", "proba": "OSCE", "metoda": "Abilități practice în 4 pași"}, {"cat": "RA", "verb": "comunică", "cont": "pacientului planul de investigații și motivul fiecăreia", "ctx": "sub supravegherea medicului, în stagiul clinic", "bloom": 0, "miller": "Face", "proba": "mini-CEX", "metoda": "La patul bolnavului"}]}, {"prog": "Medicină", "disc": "Chirurgie generală", "anexa": "RI 16 Medicină", "items": [{"cat": "C", "verb": "explică", "cont": "indicațiile, contraindicațiile și riscurile intervențiilor chirurgicale frecvente", "ctx": "în patologia abdominală", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "efectuează", "cont": "manevrele chirurgicale de bază (incizie, sutură, înnodare, hemostază)", "ctx": "pe model de simulare", "bloom": 3, "miller": "Arată cum", "proba": "Simulare cu listă de verificare", "metoda": "Abilități practice în 4 pași"}, {"cat": "RA", "verb": "colaborează", "cont": "cu echipa operatorie în rolul atribuit", "ctx": "sub supraveghere, în blocul operator", "bloom": 0, "miller": "Face", "proba": "Feedback 360°", "metoda": "Stagiu clinic"}]}, {"prog": "Medicină dentară", "disc": "Odontoterapie restauratoare", "anexa": "RI 10 Medicină dentară", "items": [{"cat": "C", "verb": "clasifică", "cont": "leziunile carioase după sistemul ICDAS", "ctx": "pe imagini clinice", "bloom": 2, "miller": "Știe cum", "proba": "Întrebări scurte pe caz", "metoda": "Seminar cu caz"}, {"cat": "A", "verb": "efectuează", "cont": "restaurări directe ale cavităților de clasele I–V", "ctx": "pe dinți artificiali montați pe simulator", "bloom": 3, "miller": "Arată cum", "proba": "Simulare cu listă de verificare", "metoda": "Abilități practice în 4 pași"}, {"cat": "RA", "verb": "respectă", "cont": "protocolul de control al infecțiilor", "ctx": "la fiecare pacient tratat în clinică", "bloom": 0, "miller": "Face", "proba": "Observare cu fișă", "metoda": "Stagiu clinic"}]}, {"prog": "Farmacie", "disc": "Tehnologie farmaceutică", "anexa": "RI 6 Farmacie", "items": [{"cat": "C", "verb": "explică", "cont": "rolul excipienților în formele farmaceutice solide, semisolide și lichide", "ctx": "", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "prepară", "cont": "forme farmaceutice magistrale (soluții, unguente, supozitoare)", "ctx": "conform Farmacopeei Române", "bloom": 3, "miller": "Arată cum", "proba": "OSPE", "metoda": "Lucrare practică de laborator"}, {"cat": "RA", "verb": "verifică", "cont": "singur calitatea preparatului (aspect, omogenitate, etichetare)", "ctx": "înainte de a-l preda", "bloom": 5, "miller": "Arată cum", "proba": "Observare cu fișă", "metoda": "Lucrare practică de laborator"}]}, {"prog": "Asistență medicală generală", "disc": "Nursing general", "anexa": "RI 13 AMG", "items": [{"cat": "C", "verb": "descrie", "cont": "etapele procesului de nursing", "ctx": "(culegerea datelor, diagnosticul de nursing, planificarea, implementarea, evaluarea)", "bloom": 1, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "elaborează", "cont": "un plan de îngrijire pentru un pacient imobilizat la pat", "ctx": "pornind de la evaluarea nevoilor, pe un caz scris", "bloom": 6, "miller": "Știe cum", "proba": "Proiect sau temă", "metoda": "Învățare bazată pe caz (CBL)"}, {"cat": "RA", "verb": "își organizează", "cont": "singur intervențiile autonome din planul de îngrijire", "ctx": "în stagiul clinic, în limita rolului propriu", "bloom": 0, "miller": "Face", "proba": "Observare cu fișă", "metoda": "Stagiu clinic"}]}, {"prog": "Moașe", "disc": "Sarcină, naștere și puerperalitate", "anexa": "RI 9 Moașe", "items": [{"cat": "C", "verb": "explică", "cont": "modificările fiziologice ale organismului matern în sarcină", "ctx": "și semnificația lor clinică", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Clasă inversată"}, {"cat": "A", "verb": "efectuează", "cont": "examenul obstetrical extern (inspecție, palpare, ascultarea bătăilor cordului fetal)", "ctx": "pe simulator", "bloom": 3, "miller": "Arată cum", "proba": "OSCE", "metoda": "Simulare"}, {"cat": "RA", "verb": "informează", "cont": "gravida despre semnele care impun prezentarea de urgență la maternitate", "ctx": "la fiecare consultație prenatală din stagiu", "bloom": 0, "miller": "Face", "proba": "Observare cu fișă", "metoda": "Stagiu clinic"}]}, {"prog": "Balneofiziokinetoterapie și recuperare", "disc": "Evaluare osteoarticulară și musculară", "anexa": "RI 14 BFKT", "items": [{"cat": "C", "verb": "explică", "cont": "principiile testingului muscular manual", "ctx": "și semnificația gradelor 0–5", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "măsoară", "cont": "goniometric amplitudinea de mișcare a articulațiilor membrelor", "ctx": "după protocolul standard", "bloom": 3, "miller": "Arată cum", "proba": "OSCE", "metoda": "Abilități practice în 4 pași"}, {"cat": "RA", "verb": "consemnează", "cont": "rezultatele evaluării în fișa pacientului", "ctx": "în formatul stabilit, la fiecare ședință din stagiu", "bloom": 0, "miller": "Face", "proba": "Portofoliu", "metoda": "Stagiu clinic"}]}, {"prog": "Nutriție și dietetică", "disc": "Evaluarea nutrițională", "anexa": "RI 8 Nutriție și dietetică", "items": [{"cat": "C", "verb": "explică", "cont": "semnificația indicatorilor antropometrici (IMC, circumferința abdominală)", "ctx": "în estimarea riscului cardiometabolic", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "calculează", "cont": "necesarul energetic zilnic al unui pacient", "ctx": "pornind de la vârstă, sex, datele antropometrice și nivelul de activitate fizică", "bloom": 3, "miller": "Știe cum", "proba": "Întrebări scurte pe caz", "metoda": "Învățare în echipă (TBL)"}, {"cat": "RA", "verb": "adaptează", "cont": "recomandările nutriționale la preferințele pacientului și la contextul său cultural", "ctx": "într-o ședință de consiliere simulată", "bloom": 3, "miller": "Arată cum", "proba": "Simulare cu listă de verificare", "metoda": "Simulare"}]}, {"prog": "Bioinginerie", "disc": "Instrumentație biomedicală și măsurări fiziologice", "anexa": "RI 2 Științe inginerești aplicate", "items": [{"cat": "C", "verb": "explică", "cont": "principiul de funcționare al aparatelor de măsurare a semnalelor bioelectrice", "ctx": "(ECG, EEG, EMG)", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "etalonează", "cont": "traductoarele folosite în măsurările fiziologice", "ctx": "cu trasarea curbei de etalonare", "bloom": 3, "miller": "Arată cum", "proba": "OSPE", "metoda": "Lucrare practică de laborator"}, {"cat": "RA", "verb": "respectă", "cont": "normele de electrosecuritate", "ctx": "la fiecare montaj experimental cu subiect uman", "bloom": 0, "miller": "Arată cum", "proba": "Observare cu fișă", "metoda": "Lucrare practică de laborator"}]}];
+const EXAMPLES=[{"prog": "Medicină", "disc": "Farmacologie I", "anexa": "RI 2 Medicină", "items": [{"cat": "C", "verb": "compară", "cont": "clasele de diuretice", "ctx": "după locul de acțiune în nefron, mecanismul de acțiune și efectul asupra potasemiei", "bloom": 2, "miller": "Știe cum", "proba": "Întrebări scurte pe caz", "metoda": "Învățare bazată pe caz (CBL)", "pond": 15}, {"cat": "A", "verb": "calculează", "cont": "doza de încărcare și de întreținere a unui medicament", "ctx": "pornind de la parametrii farmacocinetici dați într-un caz", "bloom": 3, "miller": "Știe cum", "proba": "OSPE", "metoda": "Învățare în echipă (TBL)", "pond": 20}, {"cat": "RA", "verb": "își argumentează", "cont": "în fața grupei alegerea unui medicament pentru un caz", "ctx": "cântărind beneficiul, riscul și interacțiunile", "bloom": 5, "miller": "Arată cum", "proba": "Prezentare argumentată cu criterii publice", "metoda": "Învățare bazată pe caz (CBL)", "pond": 10}]}, {"prog": "Medicină", "disc": "Cardiologie", "anexa": "RI 5 Medicină", "items": [{"cat": "C", "verb": "explică", "cont": "mecanismele de compensare neuroumorală din insuficiența cardiacă cu fracție de ejecție redusă", "ctx": "și consecințele lor clinice", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "examinează", "cont": "aparatul cardiovascular al unui pacient standardizat", "ctx": "după protocolul de examinare clinică al disciplinei", "bloom": 3, "miller": "Arată cum", "proba": "OSCE", "metoda": "Abilități practice în 4 pași"}, {"cat": "RA", "verb": "comunică", "cont": "pacientului planul de investigații și motivul fiecăreia", "ctx": "sub supravegherea medicului, în stagiul clinic", "bloom": 0, "miller": "Face", "proba": "mini-CEX", "metoda": "La patul bolnavului"}]}, {"prog": "Medicină", "disc": "Chirurgie generală", "anexa": "RI 16 Medicină", "items": [{"cat": "C", "verb": "explică", "cont": "indicațiile și contraindicațiile colecistectomiei laparoscopice", "ctx": "în patologia biliară", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "efectuează", "cont": "o sutură cu fire separate pe model de simulare", "ctx": "folosind instrumentarul adecvat", "bloom": 3, "miller": "Arată cum", "proba": "Simulare cu listă de verificare", "metoda": "Abilități practice în 4 pași"}, {"cat": "RA", "verb": "colaborează", "cont": "cu echipa operatorie în rolul atribuit", "ctx": "sub supraveghere, în blocul operator", "bloom": 0, "miller": "Face", "proba": "Feedback 360°", "metoda": "Stagiu clinic"}]}, {"prog": "Medicină dentară", "disc": "Odontoterapie restauratoare", "anexa": "RI 10 Medicină dentară", "items": [{"cat": "C", "verb": "clasifică", "cont": "leziunile carioase după sistemul ICDAS", "ctx": "pe imagini clinice", "bloom": 2, "miller": "Știe cum", "proba": "Întrebări scurte pe caz", "metoda": "Seminar cu caz"}, {"cat": "A", "verb": "efectuează", "cont": "o restaurare de clasa a II-a din compozit", "ctx": "pe dinte artificial montat pe simulator", "bloom": 3, "miller": "Arată cum", "proba": "Simulare cu listă de verificare", "metoda": "Abilități practice în 4 pași"}, {"cat": "RA", "verb": "respectă", "cont": "protocolul de control al infecțiilor", "ctx": "la fiecare pacient tratat în clinică", "bloom": 0, "miller": "Face", "proba": "Observare cu fișă", "metoda": "Stagiu clinic"}]}, {"prog": "Farmacie", "disc": "Tehnologie farmaceutică", "anexa": "RI 6 Farmacie", "items": [{"cat": "C", "verb": "explică", "cont": "rolul excipienților într-un comprimat", "ctx": "(diluanți, lianți, dezagreganți, lubrifianți)", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "prepară", "cont": "un unguent după o rețetă magistrală", "ctx": "conform Farmacopeei Române și regulilor de bună practică farmaceutică", "bloom": 3, "miller": "Arată cum", "proba": "OSPE", "metoda": "Lucrare practică de laborator"}, {"cat": "RA", "verb": "verifică", "cont": "singur calitatea preparatului (aspect, omogenitate, etichetare)", "ctx": "înainte de a-l preda", "bloom": 5, "miller": "Arată cum", "proba": "Observare cu fișă", "metoda": "Lucrare practică de laborator"}]}, {"prog": "Asistență medicală generală", "disc": "Nursing general", "anexa": "RI 13 AMG", "items": [{"cat": "C", "verb": "descrie", "cont": "etapele procesului de nursing", "ctx": "(culegerea datelor, diagnosticul de nursing, planificarea, implementarea, evaluarea)", "bloom": 1, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "elaborează", "cont": "un plan de îngrijire pentru un pacient imobilizat la pat", "ctx": "pornind de la evaluarea nevoilor, pe un caz scris", "bloom": 6, "miller": "Știe cum", "proba": "Proiect sau temă", "metoda": "Învățare bazată pe caz (CBL)"}, {"cat": "RA", "verb": "își organizează", "cont": "singur intervențiile autonome din planul de îngrijire", "ctx": "în stagiul clinic, în limita rolului propriu", "bloom": 0, "miller": "Face", "proba": "Observare cu fișă", "metoda": "Stagiu clinic"}]}, {"prog": "Moașe", "disc": "Sarcină, naștere și puerperalitate", "anexa": "RI 9 Moașe", "items": [{"cat": "C", "verb": "explică", "cont": "modificările fiziologice ale organismului matern în sarcină", "ctx": "și semnificația lor clinică", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Clasă inversată"}, {"cat": "A", "verb": "efectuează", "cont": "palparea abdominală obstetricală prin cele patru manevre Leopold", "ctx": "pe simulator", "bloom": 3, "miller": "Arată cum", "proba": "OSCE", "metoda": "Simulare"}, {"cat": "RA", "verb": "informează", "cont": "gravida despre semnele care impun prezentarea de urgență la maternitate", "ctx": "la fiecare consultație prenatală din stagiu", "bloom": 0, "miller": "Face", "proba": "Observare cu fișă", "metoda": "Stagiu clinic"}]}, {"prog": "Balneofiziokinetoterapie și recuperare", "disc": "Evaluare osteoarticulară și musculară", "anexa": "RI 14 BFKT", "items": [{"cat": "C", "verb": "explică", "cont": "principiile testingului muscular manual", "ctx": "și semnificația gradelor 0–5", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "măsoară", "cont": "goniometric amplitudinea de mișcare a genunchiului", "ctx": "după protocolul standard", "bloom": 3, "miller": "Arată cum", "proba": "OSCE", "metoda": "Abilități practice în 4 pași"}, {"cat": "RA", "verb": "consemnează", "cont": "rezultatele evaluării în fișa pacientului", "ctx": "în formatul stabilit, la fiecare ședință din stagiu", "bloom": 0, "miller": "Face", "proba": "Portofoliu", "metoda": "Stagiu clinic"}]}, {"prog": "Nutriție și dietetică", "disc": "Evaluarea nutrițională", "anexa": "RI 8 Nutriție și dietetică", "items": [{"cat": "C", "verb": "explică", "cont": "semnificația indicatorilor antropometrici (IMC, circumferința abdominală)", "ctx": "în estimarea riscului cardiometabolic", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "calculează", "cont": "necesarul energetic zilnic al unui pacient", "ctx": "pornind de la vârstă, sex, datele antropometrice și nivelul de activitate fizică", "bloom": 3, "miller": "Știe cum", "proba": "Întrebări scurte pe caz", "metoda": "Învățare în echipă (TBL)"}, {"cat": "RA", "verb": "adaptează", "cont": "recomandările nutriționale la preferințele pacientului și la contextul său cultural", "ctx": "într-o ședință de consiliere simulată", "bloom": 3, "miller": "Arată cum", "proba": "Simulare cu listă de verificare", "metoda": "Simulare"}]}, {"prog": "Bioinginerie", "disc": "Instrumentație biomedicală și măsurări fiziologice", "anexa": "RI 2 Științe inginerești aplicate", "items": [{"cat": "C", "verb": "explică", "cont": "principiul de funcționare al unui electrocardiograf", "ctx": "(electrozi, amplificare, filtrare)", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "etalonează", "cont": "un senzor de presiune", "ctx": "față de un manometru de referință, cu trasarea curbei de etalonare", "bloom": 3, "miller": "Arată cum", "proba": "OSPE", "metoda": "Lucrare practică de laborator"}, {"cat": "RA", "verb": "respectă", "cont": "normele de electrosecuritate", "ctx": "la fiecare montaj experimental cu subiect uman", "bloom": 0, "miller": "Arată cum", "proba": "Observare cu fișă", "metoda": "Lucrare practică de laborator"}]}];
 (function(){const sel=$("#exsel"); let h=""; EXAMPLES.forEach((e,gi)=>{h+='<optgroup label="'+esc(e.prog+" · "+e.disc)+'">'+e.items.map((it,ii)=>'<option value="'+gi+'.'+ii+'">'+esc(it.cat+": "+it.verb+" "+it.cont)+'</option>').join("")+'</optgroup>';}); sel.innerHTML=h;
- const show=()=>{const [g,i]=sel.value.split(".").map(Number); const e=EXAMPLES[g], it=e.items[i]; $("#extext").innerHTML='La final, studentul <b>'+esc(it.verb)+'</b> '+esc(it.cont)+(it.ctx?" "+esc(it.ctx):"")+'. <span class="mini">('+esc(e.disc)+"; "+esc(e.anexa)+')</span>';};
+ const show=()=>{const [g,i]=sel.value.split(".").map(Number); const e=EXAMPLES[g], it=e.items[i]; $("#extext").innerHTML='La finalul disciplinei, studentul <b>'+esc(it.verb)+'</b> '+esc(it.cont)+(it.ctx?" "+esc(it.ctx):"")+'. <span class="mini">('+esc(e.disc)+"; "+esc(e.anexa)+')</span>';};
  sel.onchange=show; show();})();
 $("#loadex").onclick=()=>{const [g,i]=$("#exsel").value.split(".").map(Number); const e=EXAMPLES[g], it=e.items[i];
   if(editId){editId=null; $("#editing").hidden=true; $("#save").textContent="Adaugă în matrice";}
@@ -626,36 +607,24 @@ function renderMatrix(){
   const gs=groupsWithData(); if((gfilter!=="all"&&!gs.includes(gfilter))||(gfilter==="all"&&gs.length===1)) gfilter=gs[0]||"all";
   $("#gfilters").innerHTML=(gs.length?'<span class="mini" style="margin-right:4px">Arată:</span>':'')+gs.map(g=>{const disc=(RI.filter(r=>r.grupa===g).slice(-1)[0]||{}).disc||""; return '<button class="chip'+(gfilter===g?" sel":"")+'" data-g="'+esc(g)+'">'+esc(g)+(disc?" · "+esc(disc):"")+'</button>';}).join("")+(gs.length>1?'<button class="chip'+(gfilter==="all"?" sel":"")+'" data-g="all">Toate grupele</button>':"");
   const rows=RI.filter(r=>gfilter==="all"||r.grupa===gfilter).sort((a,b)=>codeNum(a.grupa)-codeNum(b.grupa)||CATORD[a.cat]-CATORD[b.cat]||codeNum(a.cod)-codeNum(b.cod));
-  if(!rows.length){$("#mbody").innerHTML='<tr><td colspan="7" class="empty-state">Matricea se completează din fila „Compune rezultatul”. Fiecare rezultat adăugat apare aici, cu metoda, proba și ponderea lui.</td></tr>'; $("#sum").innerHTML=""; $("#checks").innerHTML=""; $("#mnote").hidden=true; return;}
-  $("#mnote").hidden=false;
+  if(!rows.length){$("#mbody").innerHTML='<tr><td colspan="7" class="empty-state">Matricea se completează din fila „Compune rezultatul”. Fiecare rezultat adăugat apare aici, cu metoda, proba și ponderea lui.</td></tr>'; $("#sum").innerHTML=""; $("#checks").innerHTML=""; return;}
   let html="", cur=null;
   rows.forEach(r=>{
     if(gfilter==="all"&&r.grupa!==cur){cur=r.grupa; html+='<tr class="grouprow"><td colspan="7">'+esc(r.grupa)+(r.disc?" · "+esc(r.disc):"")+'</td></tr>';}
-    const sent='La final, studentul <b>'+esc(r.verb)+'</b> '+esc(r.cont)+(r.ctx?" "+esc(r.ctx):"")+".";
+    const sent='La finalul disciplinei, studentul <b>'+esc(r.verb)+'</b> '+esc(r.cont)+(r.ctx?" "+esc(r.ctx):"")+".";
     html+='<tr data-id="'+esc(r.id)+'"><td class="code">'+esc(r.cod)+'</td><td class="ri">'+sent+'</td><td>'+(r.bloom?r.bloom+" · "+esc(BLOOM[r.bloom-1]).replace("a-și ","").replace("a ",""):(r.cat==="RA"?"RA":"n.a."))+'<br><span class="mini">Miller: '+esc(r.miller||"")+'</span></td>'+
       '<td><div class="stack"><select data-f="metoda" aria-label="Metoda"><option value="">metoda…</option>'+METHODS.map(m=>'<option'+(m===r.metoda?" selected":"")+'>'+esc(m)+'</option>').join("")+'</select>'+
       '<select data-f="proba" aria-label="Proba"><option value="">proba…</option>'+ALLPROBES.map(m=>'<option'+(m===r.proba?" selected":"")+'>'+esc(m)+'</option>').join("")+'</select>'+
-      '<select data-f="moment" aria-label="Momentul">'+["Pe parcurs","Evaluare practică","Evaluare finală"].map(m=>'<option'+(m===r.moment?" selected":"")+'>'+m+'</option>').join("")+'</select>'+(probeOff(r.cat,r.miller,r.proba)?'<span class="rowsoft">Proba se folosește de obicei la alt nivel decât „'+esc(r.miller)+'”.</span>':'')+'</div></td>'+
+      '<select data-f="moment" aria-label="Momentul">'+["Pe parcurs","Evaluare practică","Evaluare finală"].map(m=>'<option'+(m===r.moment?" selected":"")+'>'+m+'</option>').join("")+'</select></div></td>'+
       '<td><input class="w" type="number" min="0" max="100" step="5" data-f="pondere" value="'+(r.pondere??"")+'" aria-label="Pondere"></td>'+
-      '<td>'+esc(r.anexa||"")+'</td><td style="white-space:nowrap"><button data-act="dup" title="Același rezultat, încă o probă">+ probă</button> <button data-act="edit" title="Editează">✎</button> <button data-act="del" title="Șterge">✕</button></td></tr>';
+      '<td>'+esc(r.anexa||"")+'</td><td style="white-space:nowrap"><button data-act="edit" title="Editează">✎</button> <button data-act="del" title="Șterge">✕</button></td></tr>';
   });
   $("#mbody").innerHTML=html;
   // summary and checks (per group in view)
   const g=gfilter==="all"?null:gfilter; const set=g?rows:[];
   if(!g){$("#sum").innerHTML='<span class="mini">Alegeți o grupă pentru totalul ponderilor și verificări.</span>'; $("#checks").innerHTML=""; return;}
-  const tot=set.reduce((a,r)=>a+(+r.pondere||0),0);
-  const byM={}; set.forEach(r=>{byM[r.moment]=(byM[r.moment]||0)+(+r.pondere||0)});
+  const {tot,byM,C}=groupChecks(set);
   $("#sum").innerHTML='<span class="pill '+(tot===100?"ok":"warn")+'" style="font-size:1rem">Total ponderi: '+tot+'%'+(tot===100?" ✓":"")+'</span>'+Object.entries(byM).map(([k,v])=>'<span class="pill">'+esc(k)+': '+v+'%</span>').join("");
-  const cats=new Set(set.map(r=>r.cat));
-  const noMet=set.filter(r=>!r.metoda).map(r=>r.cod), noPrb=set.filter(r=>!r.proba).map(r=>r.cod), noAnx=set.filter(r=>!r.anexa).map(r=>r.cod);
-  const hasPar=set.some(r=>r.moment==="Pe parcurs"&&(+r.pondere||0)>0);
-  const C=[
-   ["Categorii",["C","A","RA"].every(c=>cats.has(c)),["C","A","RA"].every(c=>cats.has(c))?"C, A și RA sunt toate prezente.":"Adăugați: "+["C","A","RA"].filter(c=>!cats.has(c)).join(", ")+"."],
-   ["Metodă pentru fiecare RI",!noMet.length,noMet.length?"De ales pentru: "+noMet.join(", ")+".":"Fiecare rezultat are o metodă."],
-   ["Probă pentru fiecare RI",!noPrb.length,noPrb.length?"De ales pentru: "+noPrb.join(", ")+".":"Fiecare rezultat are o probă."],
-   ["Evaluare pe parcurs cu pondere",hasPar,hasPar?"Descrisă și ponderată (cerință ARACIS).":"Dați pondere unei probe pe parcurs."],
-   ["Legătura cu Anexa 2",!noAnx.length,noAnx.length?"De notat pentru: "+noAnx.join(", ")+".":"Fiecare rezultat trimite la Anexa 2."]
-  ];
   $("#checks").innerHTML=C.map(([t,ok,msg])=>'<div class="'+(ok?"ok":"todo")+'"><b>'+esc(t)+(ok?" ✓":"")+'</b>'+esc(msg)+'</div>').join("");
 }
 $("#gfilters").addEventListener("click",e=>{const b=e.target.closest("[data-g]"); if(!b) return; gfilter=b.dataset.g; LS.set("atelier.gfilter",gfilter); renderMatrix();});
@@ -663,8 +632,6 @@ const pendingDel=new Set();
 $("#mbody").addEventListener("click",async e=>{
   const b=e.target.closest("[data-act]"); if(!b) return; const id=b.closest("tr").dataset.id;
   if(b.dataset.act==="edit") return editRI(id);
-  if(b.dataset.act==="dup"){ const r=RI.find(x=>x.id===id); if(!r) return; const d=Object.assign({},r); delete d.id; d.proba=""; d.pondere=null; d.moment="Pe parcurs"; d.ts=(r.ts||Date.now())+1;
-    try{ await store.write("ri",null,d); toast("Rândul nou pentru "+r.cod+": alegeți proba și ponderea"); }catch(err){ toast("Nu s-a putut adăuga"); } return; }
   if(b.dataset.act==="del"){ if(!pendingDel.has(id)){pendingDel.add(id); b.textContent="Sigur?"; setTimeout(()=>{pendingDel.delete(id); if(b.isConnected) b.textContent="✕"},3000); return;}
     pendingDel.delete(id); try{await store.del("ri",id); toast("Rezultat șters");}catch(err){toast("Nu s-a putut șterge");} }
 });
@@ -678,24 +645,90 @@ $("#mbody").addEventListener("change",async e=>{
 $("#copy").onclick=()=>{
   const rows=RI.filter(r=>gfilter==="all"||r.grupa===gfilter).sort((a,b)=>codeNum(a.grupa)-codeNum(b.grupa)||CATORD[a.cat]-CATORD[b.cat]||codeNum(a.cod)-codeNum(b.cod));
   const head=["Grupa","Disciplina","Cod RI","Rezultatul învățării","Bloom","Miller","Metoda","Proba","Moment","Pondere (%)","Anexa 2"];
-  const cells=rows.map(r=>[r.grupa,r.disc,r.cod,"La final, studentul "+r.verb+" "+r.cont+(r.ctx?" "+r.ctx:"")+".",r.bloom?r.bloom+" "+BLOOM[r.bloom-1]:"n.a.",r.miller,r.metoda,r.proba,r.moment,r.pondere??"",r.anexa].map(x=>String(x??"").replace(/[\t\n]/g," ")));
-  const tsv=[head.join("\t")].concat(cells.map(c=>c.join("\t"))).join("\n");
-  const td='style="border:1px solid #000;padding:3pt 5pt;vertical-align:top;font-family:\'Times New Roman\',serif;font-size:10pt"';
-  const th='style="border:1px solid #000;padding:3pt 5pt;vertical-align:top;font-family:\'Times New Roman\',serif;font-size:10pt;font-weight:bold;background:#e7e7e7"';
-  const html='<meta charset="utf-8"><table style="border-collapse:collapse;width:100%" border="1" cellspacing="0" cellpadding="4"><thead><tr>'+head.map(h=>'<th '+th+'>'+esc(h)+'</th>').join("")+'</tr></thead><tbody>'+cells.map(c=>'<tr>'+c.map(x=>'<td '+td+'>'+esc(x)+'</td>').join("")+'</tr>').join("")+'</tbody></table>';
-  const done=()=>toast("Matricea a fost copiată");
-  const fallback=()=>{
-    const onCopy=e=>{e.clipboardData.setData("text/html",html); e.clipboardData.setData("text/plain",tsv); e.preventDefault();};
-    document.addEventListener("copy",onCopy); let ok=false;
-    try{ok=document.execCommand("copy")}catch(e){}
-    document.removeEventListener("copy",onCopy);
-    toast(ok?"Matricea a fost copiată":"Copierea nu e permisă aici");
-  };
-  try{
-    if(window.ClipboardItem&&navigator.clipboard&&navigator.clipboard.write){
-      navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([html],{type:"text/html"}),"text/plain":new Blob([tsv],{type:"text/plain"})})]).then(done,fallback);
-    } else fallback();
-  }catch(e){ fallback(); }
+  const tsv=[head.join("\t")].concat(rows.map(r=>[r.grupa,r.disc,r.cod,"La finalul disciplinei, studentul "+r.verb+" "+r.cont+(r.ctx?" "+r.ctx:"")+".",r.bloom?r.bloom+" "+BLOOM[r.bloom-1]:"n.a.",r.miller,r.metoda,r.proba,r.moment,r.pondere??"",r.anexa].map(x=>String(x??"").replace(/[\t\n]/g," ")).join("\t"))).join("\n");
+  const fallback=()=>{const ta=document.createElement("textarea"); ta.value=tsv; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); let ok=false; try{ok=document.execCommand("copy")}catch(e){} ta.remove(); toast(ok?"Matricea a fost copiată":"Copierea nu e permisă aici");};
+  try{ navigator.clipboard.writeText(tsv).then(()=>toast("Matricea a fost copiată"),fallback); }catch(e){ fallback(); }
+};
+
+/* ---------- Word (.docx) pe grupă ---------- */
+function groupChecks(set){
+  const tot=set.reduce((a,r)=>a+(+r.pondere||0),0);
+  const byM={}; set.forEach(r=>{byM[r.moment]=(byM[r.moment]||0)+(+r.pondere||0)});
+  const cats=new Set(set.map(r=>r.cat));
+  const noMet=set.filter(r=>!r.metoda).map(r=>r.cod), noPrb=set.filter(r=>!r.proba).map(r=>r.cod), noAnx=set.filter(r=>!r.anexa).map(r=>r.cod);
+  const hasPar=set.some(r=>r.moment==="Pe parcurs"&&(+r.pondere||0)>0);
+  const C=[
+   ["Categorii",["C","A","RA"].every(c=>cats.has(c)),["C","A","RA"].every(c=>cats.has(c))?"C, A și RA sunt toate prezente.":"Adăugați: "+["C","A","RA"].filter(c=>!cats.has(c)).join(", ")+"."],
+   ["Metodă pentru fiecare RI",!noMet.length,noMet.length?"De ales pentru: "+noMet.join(", ")+".":"Fiecare rezultat are o metodă."],
+   ["Probă pentru fiecare RI",!noPrb.length,noPrb.length?"De ales pentru: "+noPrb.join(", ")+".":"Fiecare rezultat are o probă."],
+   ["Evaluare pe parcurs cu pondere",hasPar,hasPar?"Descrisă și ponderată (cerință ARACIS).":"Dați pondere unei probe pe parcurs."],
+   ["Legătura cu Anexa 2",!noAnx.length,noAnx.length?"De notat pentru: "+noAnx.join(", ")+".":"Fiecare rezultat trimite la Anexa 2."]
+  ];
+  return {tot,byM,C};
+}
+const CRC=(()=>{const t=new Uint32Array(256); for(let n=0;n<256;n++){let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; t[n]=c>>>0;} return b=>{let c=0xFFFFFFFF; for(let i=0;i<b.length;i++) c=t[(c^b[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0;};})();
+function zipStore(files){ // [{name, text}] -> Blob (zip fără compresie)
+  const enc=new TextEncoder(), parts=[], cen=[]; let off=0;
+  const u16=v=>[v&255,(v>>>8)&255], u32=v=>[v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255];
+  files.forEach(f=>{const nm=enc.encode(f.name), d=enc.encode(f.text), crc=CRC(d);
+    const h=new Uint8Array([0x50,0x4b,3,4,...u16(20),...u16(0x800),...u16(0),...u16(0),...u16(0x21),...u32(crc),...u32(d.length),...u32(d.length),...u16(nm.length),...u16(0)]);
+    parts.push(h,nm,d);
+    cen.push(new Uint8Array([0x50,0x4b,1,2,...u16(20),...u16(20),...u16(0x800),...u16(0),...u16(0),...u16(0x21),...u32(crc),...u32(d.length),...u32(d.length),...u16(nm.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(off)]),nm);
+    off+=h.length+nm.length+d.length;});
+  const cs=cen.reduce((a,x)=>a+x.length,0);
+  return new Blob([...parts,...cen,new Uint8Array([0x50,0x4b,5,6,0,0,0,0,...u16(files.length),...u16(files.length),...u32(cs),...u32(off),0,0])],{type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+}
+function docxMatrix(groups){ // groups: [{g, disc, rows}]
+  const x=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const run=(t,o={})=>'<w:r><w:rPr>'+(o.b?'<w:b/>':'')+(o.i?'<w:i/>':'')+(o.sz?'<w:sz w:val="'+o.sz+'"/><w:szCs w:val="'+o.sz+'"/>':'')+'</w:rPr><w:t xml:space="preserve">'+x(t)+'</w:t></w:r>';
+  const par=(runs,o={})=>'<w:p><w:pPr>'+(o.br?'<w:pageBreakBefore/>':'')+'<w:spacing w:before="0" w:after="'+(o.after||0)+'" w:line="'+(o.line||360)+'" w:lineRule="auto"/><w:jc w:val="'+(o.jc||"both")+'"/></w:pPr>'+runs+'</w:p>';
+  const W=[650,2750,1100,1250,1350,950,976];
+  const cell=(content,w,o={})=>'<w:tc><w:tcPr><w:tcW w:w="'+w+'" w:type="dxa"/>'+(o.span?'<w:gridSpan w:val="'+o.span+'"/>':'')+(o.fill?'<w:shd w:val="clear" w:color="auto" w:fill="'+o.fill+'"/>':'')+'</w:tcPr>'+[].concat(content).map(c=>par(c,{line:240,jc:o.jc||"left"})).join("")+'</w:tc>';
+  const S=20;
+  const head=["Cod","Rezultatul învățării","Bloom / Miller","Metoda (secț. 9)","Proba și momentul (secț. 11)","Pondere (%)","Anexa 2"];
+  let body="";
+  groups.forEach((G,gi)=>{
+    const k=groupChecks(G.rows);
+    body+=par(run("Matricea rezultatelor învățării",{b:true}),{br:gi>0,jc:"center"});
+    body+=par(run("Grupa: ",{b:true})+run(G.g)+(G.disc?run("     Disciplina: ",{b:true})+run(G.disc):""),{jc:"left"});
+    body+=par(run("Data: ",{b:true})+run(new Date().toLocaleDateString("ro-RO")),{jc:"left",after:120});
+    let t='<w:tbl><w:tblPr><w:tblW w:w="9026" w:type="dxa"/><w:tblBorders>'+["top","left","bottom","right","insideH","insideV"].map(s=>'<w:'+s+' w:val="single" w:sz="4" w:space="0" w:color="808080"/>').join("")+'</w:tblBorders><w:tblLayout w:type="fixed"/><w:tblCellMar><w:left w:w="80" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>'+W.map(w=>'<w:gridCol w:w="'+w+'"/>').join("")+'</w:tblGrid>';
+    t+='<w:tr><w:trPr><w:tblHeader/></w:trPr>'+head.map((h,i)=>cell(run(h,{b:true,sz:S}),W[i],{fill:"E7ECEF"})).join("")+'</w:tr>';
+    G.rows.forEach(r=>{
+      const bl=r.bloom?r.bloom+" ("+BLOOM[r.bloom-1]+")":(r.cat==="RA"?"RA":"n.a.");
+      t+='<w:tr><w:trPr><w:cantSplit/></w:trPr>'+cell(run(r.cod,{b:true,sz:S}),W[0])+
+        cell(run("La finalul disciplinei, studentul ",{sz:S})+run(r.verb,{b:true,sz:S})+run(" "+r.cont+(r.ctx?" "+r.ctx:"")+".",{sz:S}),W[1])+
+        cell([run(bl,{sz:S}),run("Miller: "+(r.miller||""),{sz:S,i:true})],W[2])+
+        cell(run(r.metoda||"",{sz:S}),W[3])+
+        cell([run(r.proba||"",{sz:S}),run(r.moment||"",{sz:S,i:true})],W[4])+
+        cell(run(r.pondere??"",{sz:S}),W[5],{jc:"center"})+
+        cell(run(r.anexa||"",{sz:S}),W[6])+'</w:tr>';
+    });
+    t+='<w:tr>'+cell(run("Total ponderi",{b:true,sz:S}),W[0]+W[1]+W[2]+W[3]+W[4],{span:5,jc:"right"})+cell(run(k.tot,{b:true,sz:S}),W[5],{jc:"center",fill:k.tot===100?"E2F0D9":"FBE5D6"})+cell(run("",{sz:S}),W[6])+'</w:tr></w:tbl>';
+    body+=t;
+    body+=par(run(""),{after:0});
+    body+=par(run("Total ponderi: ",{b:true})+run(k.tot+"%"+(k.tot===100?".":" (trebuie să ajungă la 100%).")),{jc:"both"});
+    body+=par(run("Pe momente: ",{b:true})+run(Object.entries(k.byM).map(([m,v])=>m+" "+v+"%").join("; ")+"."),{jc:"both"});
+    body+=par(run("Verificări",{b:true}),{jc:"left"});
+    k.C.forEach(([tt,ok,msg])=>{body+=par(run((ok?"✓ ":"De completat: ")+tt+". ",{b:!ok})+run(msg),{jc:"both"});});
+  });
+  const doc='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>';
+  const styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="ro-RO"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="360" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults></w:styles>';
+  return zipStore([
+    {name:"[Content_Types].xml",text:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>'},
+    {name:"_rels/.rels",text:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>'},
+    {name:"word/_rels/document.xml.rels",text:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'},
+    {name:"word/document.xml",text:doc},
+    {name:"word/styles.xml",text:styles}
+  ]);
+}
+$("#word").onclick=()=>{
+  const gs=groupsWithData(); if(!gs.length){toast("Matricea e goală"); return;}
+  const list=(gfilter==="all"?gs:[gfilter]).map(g=>{const rows=RI.filter(r=>r.grupa===g).sort((a,b)=>CATORD[a.cat]-CATORD[b.cat]||codeNum(a.cod)-codeNum(b.cod)); return {g,disc:(rows.slice(-1)[0]||{}).disc||"",rows};});
+  const slug=s=>String(s).normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9]+/g,"_").replace(/^_|_$/g,"").slice(0,40);
+  const name=list.length===1?"Matricea_"+slug(list[0].g)+(list[0].disc?"_"+slug(list[0].disc):"")+".docx":"Matricea_toate_grupele.docx";
+  const a=document.createElement("a"); a.href=URL.createObjectURL(docxMatrix(list)); a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast(list.length===1?"Word pentru "+list[0].g:"Word cu toate grupele, câte una pe pagină");
 };
 
 /* ---------- feedback ---------- */
