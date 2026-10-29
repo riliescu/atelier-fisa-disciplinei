@@ -262,7 +262,7 @@ td .w{width:4.5rem}
   <div class="checks" id="checks"></div>
   <div class="actions" style="margin-top:14px">
     <button id="copy">Copiază matricea (pentru Word)</button>
-    <span class="mini">Coloanele sunt separate prin tab; se lipesc direct într-un tabel.</span>
+    <span class="mini">În Word se lipește ca tabel (Ctrl+V); în Excel, fiecare coloană intră în celula ei.</span>
   </div>
 </section>
 
@@ -678,9 +678,24 @@ $("#mbody").addEventListener("change",async e=>{
 $("#copy").onclick=()=>{
   const rows=RI.filter(r=>gfilter==="all"||r.grupa===gfilter).sort((a,b)=>codeNum(a.grupa)-codeNum(b.grupa)||CATORD[a.cat]-CATORD[b.cat]||codeNum(a.cod)-codeNum(b.cod));
   const head=["Grupa","Disciplina","Cod RI","Rezultatul învățării","Bloom","Miller","Metoda","Proba","Moment","Pondere (%)","Anexa 2"];
-  const tsv=[head.join("\t")].concat(rows.map(r=>[r.grupa,r.disc,r.cod,"La final, studentul "+r.verb+" "+r.cont+(r.ctx?" "+r.ctx:"")+".",r.bloom?r.bloom+" "+BLOOM[r.bloom-1]:"n.a.",r.miller,r.metoda,r.proba,r.moment,r.pondere??"",r.anexa].map(x=>String(x??"").replace(/[\t\n]/g," ")).join("\t"))).join("\n");
-  const fallback=()=>{const ta=document.createElement("textarea"); ta.value=tsv; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); let ok=false; try{ok=document.execCommand("copy")}catch(e){} ta.remove(); toast(ok?"Matricea a fost copiată":"Copierea nu e permisă aici");};
-  try{ navigator.clipboard.writeText(tsv).then(()=>toast("Matricea a fost copiată"),fallback); }catch(e){ fallback(); }
+  const cells=rows.map(r=>[r.grupa,r.disc,r.cod,"La final, studentul "+r.verb+" "+r.cont+(r.ctx?" "+r.ctx:"")+".",r.bloom?r.bloom+" "+BLOOM[r.bloom-1]:"n.a.",r.miller,r.metoda,r.proba,r.moment,r.pondere??"",r.anexa].map(x=>String(x??"").replace(/[\t\n]/g," ")));
+  const tsv=[head.join("\t")].concat(cells.map(c=>c.join("\t"))).join("\n");
+  const td='style="border:1px solid #000;padding:3pt 5pt;vertical-align:top;font-family:\'Times New Roman\',serif;font-size:10pt"';
+  const th='style="border:1px solid #000;padding:3pt 5pt;vertical-align:top;font-family:\'Times New Roman\',serif;font-size:10pt;font-weight:bold;background:#e7e7e7"';
+  const html='<meta charset="utf-8"><table style="border-collapse:collapse;width:100%" border="1" cellspacing="0" cellpadding="4"><thead><tr>'+head.map(h=>'<th '+th+'>'+esc(h)+'</th>').join("")+'</tr></thead><tbody>'+cells.map(c=>'<tr>'+c.map(x=>'<td '+td+'>'+esc(x)+'</td>').join("")+'</tr>').join("")+'</tbody></table>';
+  const done=()=>toast("Matricea a fost copiată");
+  const fallback=()=>{
+    const onCopy=e=>{e.clipboardData.setData("text/html",html); e.clipboardData.setData("text/plain",tsv); e.preventDefault();};
+    document.addEventListener("copy",onCopy); let ok=false;
+    try{ok=document.execCommand("copy")}catch(e){}
+    document.removeEventListener("copy",onCopy);
+    toast(ok?"Matricea a fost copiată":"Copierea nu e permisă aici");
+  };
+  try{
+    if(window.ClipboardItem&&navigator.clipboard&&navigator.clipboard.write){
+      navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([html],{type:"text/html"}),"text/plain":new Blob([tsv],{type:"text/plain"})})]).then(done,fallback);
+    } else fallback();
+  }catch(e){ fallback(); }
 };
 
 /* ---------- feedback ---------- */
