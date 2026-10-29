@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atelierul fișei disciplinei</title>
+<style>
+:root{
+  --bg:#f6f4ee; --panel:#ffffff; --panel2:#eef3f0; --ink:#14231c; --muted:#5b6b62; --line:#d9dfd9;
+  --green:#00402f; --green2:#0d5a44; --gold:#cfab7a; --goldd:#8a6a3b; --cream:#f6efe4;
+  --ok:#1f7a4d; --warn:#9a5b12; --chipbg:#e4ece7; --onaccent:#ffffff; --focus:#c08a3e;
+  --l1:#e9efe9; --l2:#dbe7df; --l3:#c9dccf; --l4:#efe3cf; --l5:#e6d2ae; --l6:#d9bd8a;
+  --scale:1;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1714; --panel:#16211c; --panel2:#1b2a23; --ink:#e8efe9; --muted:#9fb2a7; --line:#2b3b33;
+  --green:#7cc4a4; --green2:#5fae8d; --gold:#d9b88a; --goldd:#e2c497; --cream:#2a261e;
+  --ok:#6fd1a0; --warn:#e7b26a; --chipbg:#22332b; --onaccent:#0f1714; --focus:#e2c497;
+  --l1:#1d2a24; --l2:#21342b; --l3:#274034; --l4:#33301f; --l5:#3d3622; --l6:#4a3f25;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1714; --panel:#16211c; --panel2:#1b2a23; --ink:#e8efe9; --muted:#9fb2a7; --line:#2b3b33;
+  --green:#7cc4a4; --green2:#5fae8d; --gold:#d9b88a; --goldd:#e2c497; --cream:#2a261e;
+  --ok:#6fd1a0; --warn:#e7b26a; --chipbg:#22332b; --onaccent:#0f1714; --focus:#e2c497;
+  --l1:#1d2a24; --l2:#21342b; --l3:#274034; --l4:#33301f; --l5:#3d3622; --l6:#4a3f25;
+  color-scheme:dark}
+html{font-size:calc(16px * var(--scale))}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Segoe UI",Calibri,Arial,sans-serif;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1400px;margin:0 auto}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-block:14px 12px;border-bottom:2px solid var(--gold)}
+.brand{display:flex;flex-direction:column;min-width:0}
+.brand small{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--goldd);font-weight:600}
+.brand b{font-size:1.25rem;color:var(--green);font-weight:700}
+nav.tabs{display:flex;gap:6px;flex-wrap:wrap}
+nav.tabs a{font-weight:600;text-decoration:none;color:var(--muted);padding:.45rem .9rem;border-radius:999px;border:1px solid var(--line);background:var(--panel)}
+nav.tabs a[aria-current="page"]{background:var(--green);color:var(--onaccent);border-color:var(--green)}
+.tools{margin-left:auto;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+button,.btn{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:.45rem .75rem}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+button.primary{background:var(--green);color:var(--onaccent);border-color:var(--green);font-weight:600;padding:.6rem 1.1rem}
+button.ghost{background:transparent}
+button:disabled{opacity:.5;cursor:not-allowed}
+.pill{font-size:.78rem;padding:.25rem .6rem;border-radius:999px;background:var(--chipbg);color:var(--muted);white-space:nowrap}
+.pill.ok{color:var(--ok)} .pill.warn{color:var(--warn)}
+main{padding-top:20px}
+section[hidden]{display:none}
+.grid2{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:22px;align-items:start}
+@media (max-width:900px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}
+.card h2{margin:0 0 12px;font-size:1rem;letter-spacing:.08em;text-transform:uppercase;color:var(--goldd)}
+label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:4px;letter-spacing:.02em}
+input,select,textarea{font:inherit;width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;padding:.5rem .65rem;background:var(--bg);color:var(--ink)}
+textarea{resize:vertical;min-height:2.6rem}
+.row{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:12px}
+.f{margin-bottom:12px;min-width:0}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{flex:1;border:0;border-radius:0;background:var(--bg);font-weight:600;padding:.5rem .4rem}
+.seg button[aria-pressed="true"]{background:var(--green);color:var(--onaccent)}
+.hint{font-size:.85rem;color:var(--muted);margin-top:4px}
+.hint.go{color:var(--ok)} .hint.nudge{color:var(--warn)}
+.vwrap{display:flex;gap:6px}
+.vwrap input{flex:1;min-width:0}
+.vwrap button{white-space:nowrap;font-weight:600}
+.vpanel{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:40;width:min(1560px,97vw);max-height:94vh;overflow:auto;background:var(--panel);border:2px solid var(--green);border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.35);padding:12px 18px}
+.vback{position:fixed;inset:0;z-index:39;background:rgba(0,0,0,.35)}
+.vhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+.vhead b{font-size:1.35rem;color:var(--green)}
+.vtabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.vtabs button{font-size:1.25rem;font-weight:700;padding:.45rem 1rem;border-radius:999px;border:2px solid var(--line);background:var(--panel2);color:var(--muted)}
+.vtabs button.on{background:var(--green);border-color:var(--green);color:var(--onaccent)}
+.vbig{display:flex;flex-wrap:wrap;gap:14px;padding:6px 2px}
+.vchip{font-size:2.6rem;line-height:1.15;font-weight:600;padding:.25em .7em;border-radius:999px;border:2px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
+.vchip:hover,.vchip:focus-visible{border-color:var(--green);color:var(--green)}
+.chip.custom{border-style:dashed;border-color:var(--goldd)}
+.cwrap{display:inline-flex;align-items:center;gap:2px}
+.cdel{font-size:.75rem;border-radius:999px;padding:.1rem .4rem;color:var(--muted)}
+.cadd{display:inline-flex;gap:4px;align-items:center;flex:1 1 14rem;min-width:0}
+.cadd input{flex:1;min-width:0;padding:.3rem .5rem;font-size:.85rem}
+.cadd button{font-size:.8rem;padding:.3rem .6rem;white-space:nowrap}
+.vchip.custom{border-style:dashed;border-color:var(--goldd)}
+.vcust{display:inline-flex;align-items:center;gap:4px}
+.vdel{font-size:1.1rem;border-radius:999px;padding:.2rem .55rem;color:var(--muted)}
+.vadd{position:sticky;bottom:-12px;margin:16px -18px -12px;padding:10px 18px 14px;border-top:2px solid var(--gold);background:var(--cream);z-index:2}
+.vadd label{font-size:1rem;color:var(--goldd);font-weight:700}
+.vaddrow{display:flex;gap:8px;flex-wrap:wrap}
+.vaddrow input{flex:1;min-width:12rem;font-size:1.3rem}
+.vaddrow button{font-weight:700;font-size:1.05rem}
+@media (max-width:700px){.vchip{font-size:1.6rem}}
+.formula{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 6px;margin-bottom:14px;font-size:.85rem;color:var(--muted)}
+.formula .fl{font-weight:600;margin-right:2px}
+.formula .fx{font-weight:600;color:var(--ink)}
+.formula i{font-style:normal;color:var(--goldd);font-weight:700}
+.formula button{border:0;border-bottom:2px dotted var(--goldd);border-radius:0;background:none;padding:0 1px;font-weight:600;color:var(--ink);cursor:pointer}
+.formula button.on{color:var(--green);border-bottom:2px solid var(--green)}
+.miller div{cursor:pointer}
+.preview{font-family:Cambria,Georgia,"Times New Roman",serif;font-size:1.9rem;line-height:1.35;margin:0 0 18px;text-wrap:pretty;min-height:5.2rem}
+.preview .lead{color:var(--muted);font-style:italic}
+.preview .verb{font-weight:600;color:var(--green);border-bottom:3px solid var(--gold)}
+.preview .empty{color:var(--muted);opacity:.6}
+.ladder{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px;margin-bottom:6px}
+.ladder div{border-radius:8px;padding:.45rem .3rem;text-align:center;font-size:.78rem;font-weight:600;color:var(--muted);background:var(--l1);border:2px solid transparent}
+.ladder div:nth-child(2){background:var(--l2)}.ladder div:nth-child(3){background:var(--l3)}.ladder div:nth-child(4){background:var(--l4)}.ladder div:nth-child(5){background:var(--l5)}.ladder div:nth-child(6){background:var(--l6)}
+.ladder div.on{border-color:var(--green);color:var(--ink);transform:translateY(-3px)}
+.miller{display:flex;gap:4px;flex-wrap:wrap;margin:14px 0 6px}
+.miller div{flex:1 1 90px;text-align:center;padding:.45rem .3rem;border-radius:8px;background:var(--panel2);font-size:.8rem;font-weight:600;color:var(--muted);border:2px solid transparent}
+.miller div.on{border-color:var(--gold);color:var(--ink)}
+.suggest{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px}
+.suggest .box{background:var(--panel2);border-radius:12px;padding:12px;min-width:0}
+.suggest h3{margin:0 0 6px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--goldd)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:.85rem;padding:.3rem .6rem;border-radius:999px;background:var(--panel);border:1px solid var(--line);cursor:pointer;color:var(--ink)}
+.chip.sel{background:var(--green);border-color:var(--green);color:var(--onaccent)}
+.example{margin-top:16px;border:1px dashed var(--gold);border-radius:12px;padding:12px;background:var(--cream)}
+.example .tag{display:inline-block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--goldd);margin-bottom:4px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:6px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--green);color:var(--onaccent);padding:.6rem 1rem;border-radius:10px;font-weight:600;z-index:20}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;align-items:center}
+.tablewrap{overflow-x:auto;border-radius:14px;border:1px solid var(--line);background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:960px}
+th{background:var(--green);color:var(--onaccent);text-align:left;font-size:.8rem;letter-spacing:.04em;padding:.6rem .6rem;position:sticky;top:0}
+td{border-top:1px solid var(--line);padding:.55rem .6rem;vertical-align:top;font-size:.95rem}
+td.code{font-weight:700;color:var(--green);white-space:nowrap}
+td.ri{font-family:Cambria,Georgia,"Times New Roman",serif;font-size:1.05rem;min-width:280px}
+td.ri b{color:var(--green)}
+tr.grouprow td{background:var(--panel2);font-weight:700;color:var(--goldd);letter-spacing:.03em}
+td input,td select{padding:.3rem .4rem;font-size:.88rem;background:var(--panel)}
+.stack{display:flex;flex-direction:column;gap:5px;min-width:15rem}
+td .w{width:4.5rem}
+.sum{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:14px}
+.checks div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.92rem}
+.checks div.ok{border-color:var(--ok)} .checks div.todo{border-color:var(--gold)}
+.checks b{display:block;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.fbin{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}
+@media (max-width:640px){.fbin{grid-template-columns:minmax(0,1fr)}}
+.fbin input{font-size:1.3rem;padding:.7rem .8rem}
+.fbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:18px}
+.note{background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--gold);border-radius:12px;padding:14px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.note.t-intrebare{border-left-color:var(--green)}
+.note.t-revenim{border-left-color:var(--warn)}
+.note p{margin:0;font-size:1.25rem;line-height:1.35;overflow-wrap:anywhere}
+.note .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
+.note.done{opacity:.45}
+.note.done p{text-decoration:line-through}
+.note .meta button{padding:.2rem .5rem;font-size:.78rem}
+.empty-state{color:var(--muted);padding:24px;text-align:center}
+.mini{font-size:.82rem;color:var(--muted)}
+.sr{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="brand"><small>Psihopedagogie medicală · UMF Iași</small><b>Atelierul fișei disciplinei</b></div>
+  <nav class="tabs" aria-label="Secțiuni">
+    <a href="#compune" data-view="compune">1 · Compune rezultatul</a>
+    <a href="#matrice" data-view="matrice">2 · Matricea grupei</a>
+    <a href="#feedback" data-view="feedback">3 · Ce spune sala</a>
+  </nav>
+  <div class="tools">
+    <button class="ghost" id="fbind" title="Salvează datele într-un fișier .json, actualizat la fiecare modificare">Fișier de date</button>
+    <button class="ghost" id="fopen" title="Încarcă date dintr-un fișier .json">Deschide date</button>
+    <button class="ghost" id="fdown" title="Descarcă o copie a datelor">Descarcă copie</button>
+    <input type="file" id="fpick" accept=".json,application/json" hidden>
+    <span id="status" class="pill">Se încarcă…</span>
+    <button class="ghost" id="smaller" title="Text mai mic" aria-label="Text mai mic">A−</button>
+    <button class="ghost" id="bigger" title="Text mai mare" aria-label="Text mai mare">A+</button>
+    <button class="ghost" id="theme" title="Comută luminos sau întunecat">◐</button>
+    <button class="ghost" id="fs" title="Ecran complet">⛶</button>
+  </div>
+</header>
+
+<main>
+<!-- ============ COMPUNE ============ -->
+<section id="v-compune">
+  <div class="grid2">
+    <div class="card">
+      <h2>Formularul</h2>
+      <div class="formula"><span class="fl">Formula:</span><span class="fx">Studentul</span><i>+</i><button type="button" data-go="verb">verb observabil</button><i>+</i><button type="button" data-go="cont">conținut</button><i>+</i><button type="button" data-go="ctx">context sau criteriu</button></div>
+      <div class="row">
+        <div><label for="grupa">Grupa</label><select id="grupa"></select></div>
+        <div style="grid-column:span 2"><label for="disc">Disciplina</label><input id="disc" placeholder="de exemplu: Farmacologie I" autocomplete="off"></div>
+      </div>
+      <div class="f"><label>Categoria (CNC)</label>
+        <div class="seg" role="group" aria-label="Categoria">
+          <button data-cat="C" aria-pressed="true">C · cunoștințe</button>
+          <button data-cat="A" aria-pressed="false">A · aptitudini</button>
+          <button data-cat="RA" aria-pressed="false">RA · resp. și autonomie</button>
+        </div>
+      </div>
+      <div class="row">
+        <div><label for="cod">Cod</label><input id="cod" autocomplete="off"></div>
+        <div style="grid-column:span 2;position:relative"><label for="verb">Verbul</label><div class="vwrap"><input id="verb" placeholder="compară, explică, calculează…" autocomplete="off"><button type="button" id="vbtn" aria-expanded="false" aria-controls="vpanel" title="Alege verbul din listă">Alege ▾</button></div><div id="vback" class="vback" hidden></div><div id="vpanel" class="vpanel" role="dialog" aria-label="Alege verbul" hidden></div><div id="verbhint" class="hint">Un singur verb, la persoana a III-a: ce face studentul.</div></div>
+      </div>
+      <div class="f"><label for="cont">Conținutul</label><textarea id="cont" rows="2" placeholder="clasele de diuretice"></textarea></div>
+      <div class="f"><label for="ctx">Contextul sau criteriul</label><textarea id="ctx" rows="2" placeholder="după locul de acțiune în nefron, mecanism și efectul asupra potasemiei"></textarea></div>
+      <div class="row">
+        <div><label for="anexa">Anexa 2 ARACIS</label><input id="anexa" placeholder="RI 2 Medicină" autocomplete="off"></div>
+        <div><label for="mil">Nivel Miller</label><select id="mil"><option>Știe</option><option>Știe cum</option><option>Arată cum</option><option>Face</option></select></div>
+      </div>
+      <div class="row">
+        <div><label for="met">Metoda (secț. 9)</label><select id="met"></select></div>
+        <div><label for="prb">Proba (secț. 11)</label><select id="prb"></select></div>
+      </div>
+      <div class="row">
+        <div><label for="mom">Momentul</label><select id="mom"><option>Pe parcurs</option><option>Evaluare practică</option><option>Evaluare finală</option></select></div>
+        <div><label for="pond">Pondere (%)</label><input id="pond" type="number" min="0" max="100" step="5" inputmode="numeric"></div>
+      </div>
+      <div class="actions">
+        <button class="primary" id="save" disabled>Adaugă în matrice</button>
+        <button id="clear">Golește formularul</button>
+        <span id="editing" class="mini" hidden>Editați rezultatul <b id="editcode"></b> · <button class="ghost" id="canceledit">renunță</button></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Rezultatul învățării</h2>
+      <p class="preview" id="preview"></p>
+      <div class="mini" style="margin-bottom:6px">Nivelul cognitiv (Bloom revizuit, Anderson și Krathwohl, 2001)</div>
+      <div class="ladder" id="ladder">
+        <div>1 · a-și aminti</div><div>2 · a înțelege</div><div>3 · a aplica</div><div>4 · a analiza</div><div>5 · a evalua</div><div>6 · a crea</div>
+      </div>
+      <div class="hint" id="bloomtxt">Scrieți verbul; nivelul se aprinde aici.</div>
+      <div class="mini" style="margin-top:14px">Nivelul de performanță (Miller, 1990)</div>
+      <div class="miller" id="millerbar"><div>Știe</div><div>Știe cum</div><div>Arată cum</div><div>Face</div></div>
+      <div class="suggest">
+        <div class="box"><h3>Probe potrivite nivelului</h3><div class="chips" id="sprb"></div></div>
+        <div class="box"><h3>Metode care produc rezultatul</h3><div class="chips" id="smet"></div></div>
+      </div>
+      <div class="example" id="example">
+        <span class="tag">Exemple didactice din mai multe programe</span>
+        <div class="row" style="margin:6px 0 8px"><div><label for="exsel">Exemplul</label><select id="exsel"></select></div></div>
+        <div id="extext"></div>
+        <div class="actions"><button id="loadex">Încarcă în formular</button><span class="mini">Se încarcă doar în formular; nu se salvează.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MATRICE ============ -->
+<section id="v-matrice" hidden>
+  <div class="filters" id="gfilters"></div>
+  <div class="sum" id="sum"></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Cod</th><th>Rezultatul învățării</th><th>Bloom · Miller</th><th>Metoda (secț. 9) · proba și momentul (secț. 11)</th><th>Pondere</th><th>Anexa 2</th><th><span class="sr">Acțiuni</span></th></tr></thead>
+    <tbody id="mbody"></tbody>
+  </table></div>
+  <div class="checks" id="checks"></div>
+  <div class="actions" style="margin-top:14px">
+    <button id="copy">Copiază matricea (pentru Word)</button>
+    <span class="mini">Coloanele sunt separate prin tab; se lipesc direct într-un tabel.</span>
+  </div>
+</section>
+
+<!-- ============ FEEDBACK ============ -->
+<section id="v-feedback" hidden>
+  <div class="card">
+    <h2>Ce spune sala</h2>
+    <div class="fbin">
+      <div><label for="fbtext">Ce s-a spus</label><input id="fbtext" placeholder="Scrieți și apăsați Enter" autocomplete="off"></div>
+      <button class="primary" id="fbadd" disabled>Notează</button>
+    </div>
+    <div class="row" style="margin-top:12px;margin-bottom:0">
+      <div><label>Tipul</label>
+        <div class="seg" role="group" aria-label="Tipul">
+          <button data-tip="intrebare" aria-pressed="true">Întrebare</button>
+          <button data-tip="idee" aria-pressed="false">Idee</button>
+          <button data-tip="revenim" aria-pressed="false">Revenim</button>
+        </div></div>
+      <div><label for="fbg">Grupa (opțional)</label><select id="fbg"></select></div>
+      <div><label for="fbf">Afișează</label><select id="fbf"><option value="open">Doar cele nediscutate</option><option value="all">Toate</option></select></div>
+    </div>
+  </div>
+  <div class="fbgrid" id="fbgrid"></div>
+</section>
+</main>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const NGR=14;
+
+/* ---------- vocabulary (consistent with the handout "Verbe Bloom și Miller") ---------- */
+const BLOOM=["a-și aminti","a înțelege","a aplica","a analiza","a evalua","a crea"];
+const VERBS={
+ 1:["enumeră","definește","recunoaște","numește","identifică","reproduce","listează","menționează"],
+ 2:["explică","descrie","exemplifică","rezumă","reformulează","clasifică","compară","interpretează","deduce","ilustrează","prezintă"],
+ 3:["prepară","realizează","etalonează","calculează","utilizează","efectuează","aplică","demonstrează","rezolvă","execută","administrează","prescrie","dozează","examinează","recoltează","măsoară","folosește"],
+ 4:["diferențiază","distinge","selectează","alege","organizează","integrează","corelează","analizează","clasifică după criterii"],
+ 5:["argumentează","justifică","decide","evaluează critic","evaluează","recomandă","susține","apreciază","prioritizează","critică","verifică"],
+ 6:["proiectează","elaborează","propune","construiește","planifică","redactează","formulează","concepe","dezvoltă"]
+};
+const RAVERBS=["își organizează singur","informează","consemnează","solicită","documentează","își argumentează","își asumă","argumentează în fața grupei","colaborează","respectă normele etice","respectă normele deontologice","respectă","își organizează","decide în limita competenței","își evaluează","solicită ajutor la timp","citează corect sursele","comunică","acționează"];
+const INTERNAL=["știe","stie","înțelege","intelege","cunoaște","cunoaste","este familiarizat","își însușește","isi insuseste","conștientizează","constientizeaza","învață","invata","aprofundează","aprofundeaza"];
+const MILLER=["Știe","Știe cum","Arată cum","Face"];
+const PROBES={
+ "Știe":["Grilă","Întrebări cu răspuns scurt","Eseu","Examen oral structurat"],
+ "Știe cum":["Grilă cu enunț de caz","Întrebări scurte pe caz","Potrivire extinsă","Examen oral pe caz","Proiect sau temă"],
+ "Arată cum":["OSCE","OSPE","Simulare cu listă de verificare"],
+ "Face":["mini-CEX","DOPS","Discuție pe caz (CbD)","Feedback 360°","Portofoliu"],
+ "RA":["Prezentare argumentată cu criterii publice","Observare cu fișă","Portofoliu","Feedback 360°","Reflecție scrisă"]
+};
+const ALLPROBES=Array.from(new Set(Object.values(PROBES).flat()));
+const METHODS=["Prelegere interactivă","Clasă inversată","Învățare bazată pe caz (CBL)","Învățare bazată pe probleme (PBL)","Învățare în echipă (TBL)","Simulare","Abilități practice în 4 pași","Seminar cu caz","Lucrare practică de laborator","La patul bolnavului","Preceptorul într-un minut / SNAPPS","Reflecție scrisă","Feedback structurat","Proiect în echipă","Stagiu clinic"];
+const METHOD_BY_LEVEL={1:["Prelegere interactivă","Clasă inversată"],2:["Prelegere interactivă","Clasă inversată","Învățare bazată pe caz (CBL)"],3:["Lucrare practică de laborator","Abilități practice în 4 pași","Seminar cu caz","Simulare"],4:["Învățare bazată pe caz (CBL)","Învățare în echipă (TBL)","Învățare bazată pe probleme (PBL)"],5:["Învățare în echipă (TBL)","Învățare bazată pe caz (CBL)","Preceptorul într-un minut / SNAPPS"],6:["Proiect în echipă","Învățare bazată pe probleme (PBL)"]};
+const METHOD_RA=["Proiect în echipă","Reflecție scrisă","Feedback structurat","La patul bolnavului","Învățare în echipă (TBL)"];
+
+const norm=s=>String(s||"").toLowerCase().trim().replace(/\s+/g," ").replace(/ş/g,"ș").replace(/ţ/g,"ț");
+let CUSTOM={}; try{ CUSTOM=LS.get("atelier.verbe",{})||{}; }catch(e){ CUSTOM={}; }
+let onCustomChange=null;
+function verbArr(k){ return k==="RA"?RAVERBS:VERBS[+k]; }
+function applyCustom(){ for(const k in CUSTOM){ const arr=verbArr(k); if(!arr) continue; (CUSTOM[k]||[]).forEach(v=>{ if(!arr.includes(v)) arr.push(v); }); } }
+applyCustom();
+let CUST_P={}, CUST_M={}; try{ CUST_P=LS.get("atelier.probe",{})||{}; CUST_M=LS.get("atelier.metode",{})||{}; }catch(e){}
+function applyCustomPM(){
+  for(const k in CUST_P){ PROBES[k]=PROBES[k]||[]; (CUST_P[k]||[]).forEach(x=>{ if(!PROBES[k].includes(x)) PROBES[k].push(x); if(!ALLPROBES.includes(x)) ALLPROBES.push(x); }); }
+  for(const k in CUST_M){ (CUST_M[k]||[]).forEach(x=>{ if(!METHODS.includes(x)) METHODS.push(x); }); }
+}
+applyCustomPM();
+function addCustomPM(kind,key,txt){ txt=String(txt||"").trim().replace(/\s+/g," "); if(!txt||txt.length>80) return "";
+  const store=kind==="p"?CUST_P:CUST_M; store[key]=store[key]||[]; if(!store[key].includes(txt)) store[key].push(txt);
+  LS.set(kind==="p"?"atelier.probe":"atelier.metode",store); applyCustomPM(); refreshPMSelects(); if(onCustomChange) onCustomChange(); return txt; }
+function removeCustomPM(kind,key,txt){ const store=kind==="p"?CUST_P:CUST_M; store[key]=(store[key]||[]).filter(x=>x!==txt);
+  const still=Object.values(store).some(a=>(a||[]).includes(txt));
+  if(kind==="p"){ const a=PROBES[key]; if(a&&a.indexOf(txt)>=0) a.splice(a.indexOf(txt),1); if(!still&&!Object.values(PROBES).some(a=>a.includes(txt))){ const i=ALLPROBES.indexOf(txt); if(i>=0) ALLPROBES.splice(i,1);} }
+  else if(!still){ const i=METHODS.indexOf(txt); if(i>=0) METHODS.splice(i,1); }
+  LS.set(kind==="p"?"atelier.probe":"atelier.metode",store); refreshPMSelects(); if(onCustomChange) onCustomChange(); }
+function refreshPMSelects(){ const mv=$("#met").value, pv=$("#prb").value; fillSelect($("#met"),METHODS,"alegeți…"); fillSelect($("#prb"),ALLPROBES,"alegeți…"); $("#met").value=mv; $("#prb").value=pv; if(typeof renderMatrix==="function"&&RI) renderMatrix(); }
+function isCustom(k,v){ return (CUSTOM[k]||[]).includes(v); }
+function addCustom(k,v){ v=norm(v); if(!v||v.length>60) return ""; for(const kk in CUSTOM) if(kk!==k&&(CUSTOM[kk]||[]).includes(v)) removeCustom(kk,v,true);
+  CUSTOM[k]=CUSTOM[k]||[]; if(!CUSTOM[k].includes(v)) CUSTOM[k].push(v); LS.set("atelier.verbe",CUSTOM); applyCustom(); if(onCustomChange) onCustomChange(); return v; }
+function removeCustom(k,v,silent){ CUSTOM[k]=(CUSTOM[k]||[]).filter(x=>x!==v); const arr=verbArr(k); const i=arr?arr.indexOf(v):-1; if(i>=0) arr.splice(i,1); LS.set("atelier.verbe",CUSTOM); if(!silent&&onCustomChange) onCustomChange(); }
+function detect(verbRaw,cat){
+  const v=norm(verbRaw); if(!v) return {level:0};
+  if(INTERNAL.some(w=>v===w||v.startsWith(w+" "))) return {level:0,internal:true};
+  const pad=" "+v+" "; if((pad.includes(" și ")||pad.includes(" si "))&&!RAVERBS.some(r=>v.startsWith(r))) return {level:0,multi:true};
+  if(cat==="RA"){const r=RAVERBS.find(r=>v.startsWith(r)); if(r) return {level:0,ra:true};}
+  for(let L=6;L>=1;L--){ if(VERBS[L].some(w=>w.includes(" ")&&v.startsWith(w))) return {level:L}; }
+  for(let L=1;L<=6;L++){ if(VERBS[L].some(w=>v===w||v.startsWith(w+" "))) return {level:L, dual: v==="descrie"?"Poate fi nivelul 1 când studentul doar reproduce.":(v.startsWith("clasifică")?"Urcă la nivelul 4 când studentul alege singur criteriile.":"")}; }
+  if(RAVERBS.some(r=>v.startsWith(r))) return {level:0,ra:true};
+  return {level:0,unknown:true};
+}
+const PERFORM=["efectuează","execută","demonstrează","administrează","examinează","recoltează","măsoară","prepară","montează"];
+function suggestMiller(level,cat,verb){
+  if(cat==="RA") return (level&&level<=5&&/^(evaluează|verifică|critică|apreciază)/.test(norm(verb)))?"Știe cum":"Arată cum";
+  if(cat==="A"){ const v=norm(verb); return PERFORM.some(p=>v===p||v.startsWith(p+" "))?"Arată cum":"Știe cum"; }
+  if(level<=2) return "Știe";
+  return "Știe cum";
+}
+
+/* ---------- storage: shared db when available, this browser otherwise ---------- */
+const store=(function(){
+  let mode="pending", fileHandle=null, chain=Promise.resolve();
+  const local={ri:LS.get("atelier.ri",[]),fb:LS.get("atelier.fb",[])};
+  const subs={ri:[],fb:[]};
+  const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+  const snapshot=()=>({aplicatie:"Atelierul fișei disciplinei",versiune:1,salvat:new Date().toISOString(),ri:local.ri,fb:local.fb,verbe:CUSTOM,probe:CUST_P,metode:CUST_M});
+  async function writeFile(){
+    if(!fileHandle) return;
+    try{
+      if(fileHandle.queryPermission&&(await fileHandle.queryPermission({mode:"readwrite"}))!=="granted"){
+        if((await fileHandle.requestPermission({mode:"readwrite"}))!=="granted"){setStatus("Fișierul nu poate fi scris; datele rămân în browser","warn");return;}
+      }
+      const w=await fileHandle.createWritable(); await w.write(JSON.stringify(snapshot(),null,1)); await w.close();
+      setStatus("Salvat în browser și în "+fileHandle.name,"ok");
+    }catch(e){ setStatus("Salvarea în fișier a eșuat; datele rămân în browser","warn"); }
+  }
+  function emit(k){ LS.set("atelier."+k,local[k]); subs[k].forEach(f=>f(local[k].slice())); chain=chain.then(writeFile); }
+  function sub(k,orderField,cb){ subs[k].push(cb); cb(local[k].slice()); }
+  async function write(k,id,data){
+    if(id){const i=local[k].findIndex(x=>x.id===id); if(i>=0) local[k][i]=Object.assign({id},data); else local[k].push(Object.assign({id},data));}
+    else local[k].push(Object.assign({id:uid()},data));
+    local[k].sort((a,b)=>(a.ts||0)-(b.ts||0)); emit(k);
+  }
+  async function del(k,id){ local[k]=local[k].filter(x=>x.id!==id); emit(k); }
+  function download(){
+    const blob=new Blob([JSON.stringify(snapshot(),null,1)],{type:"application/json"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="atelier_date_"+new Date().toISOString().slice(0,10)+".json";
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+  }
+  async function bind(){
+    if(!window.showSaveFilePicker){ download(); toast("Browserul nu permite salvarea directă; s-a descărcat o copie"); return; }
+    try{
+      const h=await window.showSaveFilePicker({suggestedName:"atelier_date.json",types:[{description:"Date atelier",accept:{"application/json":[".json"]}}]});
+      try{ const f=await h.getFile(); if(f.size>0){ const d=JSON.parse(await f.text()); fileHandle=h; merge(d); toast("Fișierul avea deja date; au fost păstrate și unite cu cele din browser"); return; } }catch(err){ /* fișier nou sau gol */ }
+      fileHandle=h; await writeFile(); toast("Datele se salvează și în "+fileHandle.name);
+    }
+    catch(e){ /* anulat */ }
+  }
+  function merge(d){
+    if(!d||!Array.isArray(d.ri)||!Array.isArray(d.fb)) throw new Error("format");
+    for(const k of ["ri","fb"]){ const m=new Map(local[k].map(x=>[x.id,x])); d[k].forEach(x=>{ if(x&&x.id) m.set(x.id,x); }); local[k]=Array.from(m.values()).sort((a,b)=>(a.ts||0)-(b.ts||0)); }
+    if(d.verbe&&typeof d.verbe==="object"){ for(const k in d.verbe) (Array.isArray(d.verbe[k])?d.verbe[k]:[]).forEach(v=>addCustom(k,String(v))); }
+    if(d.probe&&typeof d.probe==="object"){ for(const k in d.probe) (Array.isArray(d.probe[k])?d.probe[k]:[]).forEach(v=>addCustomPM("p",k,String(v))); }
+    if(d.metode&&typeof d.metode==="object"){ for(const k in d.metode) (Array.isArray(d.metode[k])?d.metode[k]:[]).forEach(v=>addCustomPM("m",k,String(v))); }
+    emit("ri"); emit("fb");
+    toast("Date încărcate: "+d.ri.length+" rezultate, "+d.fb.length+" bilete");
+  }
+  async function openData(){
+    if(window.showOpenFilePicker){
+      try{ const [h]=await window.showOpenFilePicker({types:[{description:"Date atelier",accept:{"application/json":[".json"]}}]}); const f=await h.getFile(); fileHandle=h; merge(JSON.parse(await f.text())); }
+      catch(e){ if(e&&e.name==="AbortError") return; toast("Fișierul nu e un fișier de date al atelierului"); }
+    } else $("#fpick").click();
+  }
+  $("#fpick").addEventListener("change",async e=>{ const f=e.target.files&&e.target.files[0]; if(!f) return; try{ merge(JSON.parse(await f.text())); }catch(err){ toast("Fișierul nu e un fișier de date al atelierului"); } e.target.value=""; });
+  return {
+    async init(){ mode="local"; setStatus(local.ri.length||local.fb.length?"Date salvate în browser":"Salvare în browser","ok"); },
+    sub, write, del, bind, openData, download, touch(){ chain=chain.then(writeFile); }, get mode(){return mode}
+  };
+})();
+onCustomChange=()=>store.touch();
+$("#fbind").onclick=()=>store.bind(); $("#fopen").onclick=()=>store.openData(); $("#fdown").onclick=()=>store.download();
+
+function setStatus(t,cls){const s=$("#status"); s.textContent=t; s.className="pill "+(cls||"");}
+function toast(t){const el=$("#toast"); el.textContent=t; el.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>el.hidden=true,1800);}
+
+/* ---------- state ---------- */
+let RI=[], FB=[], cat="C", tip="intrebare", editId=null, gfilter=LS.get("atelier.gfilter","all"), millerTouched=false;
+
+/* ---------- view routing ---------- */
+const VIEWS=["compune","matrice","feedback"];
+function show(){const h=(location.hash||"").slice(1); const v=VIEWS.includes(h)?h:"compune";
+  VIEWS.forEach(x=>{$("#v-"+x).hidden=x!==v}); $$("nav.tabs a").forEach(a=>a.setAttribute("aria-current",a.dataset.view===v?"page":"false"));}
+window.addEventListener("hashchange",show);
+
+/* ---------- tools ---------- */
+let scale=LS.get("atelier.scale",1.15);
+function applyScale(){document.documentElement.style.setProperty("--scale",scale); LS.set("atelier.scale",scale);}
+$("#bigger").onclick=()=>{scale=Math.min(1.8,+(scale+0.1).toFixed(2));applyScale()};
+$("#smaller").onclick=()=>{scale=Math.max(0.8,+(scale-0.1).toFixed(2));applyScale()};
+$("#theme").onclick=()=>{const r=document.documentElement; const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme=dark?"light":"dark"; LS.set("atelier.theme",r.dataset.theme)};
+{const t=LS.get("atelier.theme",null); if(t) document.documentElement.dataset.theme=t;}
+$("#fs").onclick=()=>{try{ if(document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(()=>toast("Ecranul complet nu e disponibil aici")); }catch(e){toast("Ecranul complet nu e disponibil aici")}};
+
+/* ---------- selects ---------- */
+function fillSelect(sel,items,withEmpty){sel.innerHTML=(withEmpty?'<option value="">'+withEmpty+'</option>':"")+items.map(i=>'<option>'+esc(i)+'</option>').join("");}
+(function(){
+  const g=[];for(let i=1;i<=NGR;i++) g.push("Grupa "+i);
+  fillSelect($("#grupa"),g); fillSelect($("#fbg"),g,"fără grupă");
+  fillSelect($("#met"),METHODS,"alegeți…"); fillSelect($("#prb"),ALLPROBES,"alegeți…");
+
+  const lastG=LS.get("atelier.grupa",null); if(lastG) $("#grupa").value=lastG;
+})();
+
+/* ---------- verb picker ---------- */
+const RA_SHOW=["își asumă","își argumentează","colaborează","comunică","informează","respectă","își organizează singur","decide în limita competenței","solicită ajutor la timp","citează corect sursele","consemnează","documentează"];
+let vlevel=null;
+function buildVerbPanel(){
+  const tabs=[]; if(cat==="RA") tabs.push(["RA","RA · resp. și autonomie"]);
+  for(let L=1;L<=6;L++) tabs.push([String(L),L+" · "+BLOOM[L-1]]);
+  if(!vlevel||!tabs.some(t=>t[0]===vlevel)){ const d=detect($("#verb").value,cat); vlevel=cat==="RA"?"RA":String(d.level||2); }
+  const verbs=vlevel==="RA"?RA_SHOW.concat((CUSTOM.RA||[]).filter(v=>!RA_SHOW.includes(v))):VERBS[+vlevel];
+  const lvName=vlevel==="RA"?"responsabilitate și autonomie":"nivelul "+vlevel+" ("+BLOOM[+vlevel-1]+")";
+  $("#vpanel").innerHTML='<div class="vhead"><b>Alege verbul</b><button type="button" id="vclose">Închide ✕</button></div>'+
+    '<div class="vtabs" role="tablist">'+tabs.map(([k,t])=>'<button type="button" role="tab" data-lv="'+k+'" aria-selected="'+(k===vlevel)+'"'+(k===vlevel?' class="on"':'')+'>'+esc(t)+'</button>').join("")+'</div>'+
+    '<div class="vbig">'+verbs.map(v=>isCustom(vlevel,v)?'<span class="vcust"><button type="button" class="vchip custom" data-v="'+esc(v)+'">'+esc(v)+'</button><button type="button" class="vdel" data-del="'+esc(v)+'" title="Scoate verbul din listă" aria-label="Scoate '+esc(v)+' din listă">✕</button></span>':'<button type="button" class="vchip" data-v="'+esc(v)+'">'+esc(v)+'</button>').join("")+'</div>'+
+    '<div class="vadd"><label for="vnew">Verb nou la '+esc(lvName)+'</label><div class="vaddrow"><input id="vnew" autocomplete="off" placeholder="de exemplu: auscultă"><button type="button" id="vaddbtn">Adaugă și folosește</button></div></div>';
+  const addNow=()=>{ const v=addCustom(vlevel,$("#vnew").value); if(!v) return; $("#verb").value=v; closeVerbs(); millerTouched=false; update(); $("#cont").focus(); toast("„"+v+"” a fost adăugat la "+lvName); };
+  $("#vaddbtn").onclick=addNow; $("#vnew").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); addNow(); } });
+  $("#vclose").onclick=closeVerbs;
+  $$("#vpanel [data-lv]").forEach(b=>b.onclick=()=>{vlevel=b.dataset.lv; buildVerbPanel();});
+}
+function openVerbs(){ buildVerbPanel(); $("#vpanel").hidden=false; $("#vback").hidden=false; $("#vbtn").setAttribute("aria-expanded","true"); }
+function closeVerbs(){ $("#vpanel").hidden=true; $("#vback").hidden=true; $("#vbtn").setAttribute("aria-expanded","false"); }
+$("#vbtn").addEventListener("click",()=>{ $("#vpanel").hidden?openVerbs():closeVerbs(); });
+$("#vpanel").addEventListener("click",e=>{const dl=e.target.closest("[data-del]"); if(dl){ removeCustom(vlevel,dl.dataset.del); buildVerbPanel(); return; } const b=e.target.closest("[data-v]"); if(!b) return; $("#verb").value=b.dataset.v; closeVerbs(); millerTouched=false; update(); $("#cont").focus();});
+{ let jf=false; const ve=$("#verb"); ve.addEventListener("focus",()=>{ ve.select(); jf=true; }); ve.addEventListener("mouseup",e=>{ if(jf){ e.preventDefault(); jf=false; } }); }
+document.addEventListener("click",e=>{ if(!$("#vpanel").hidden&&document.contains(e.target)&&!e.target.closest("#vpanel")&&!e.target.closest("#vbtn")) closeVerbs(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeVerbs(); });
+/* ---------- formula and Miller shortcuts ---------- */
+$$(".formula [data-go]").forEach(b=>b.addEventListener("click",()=>$("#"+b.dataset.go).focus()));
+["verb","cont","ctx"].forEach(id=>{const el=$("#"+id); el.addEventListener("focus",()=>$$(".formula [data-go]").forEach(b=>b.classList.toggle("on",b.dataset.go===id))); el.addEventListener("blur",()=>$$(".formula [data-go]").forEach(b=>b.classList.remove("on")));});
+$("#millerbar").addEventListener("click",e=>{const d=e.target.closest("#millerbar div"); if(!d) return; $("#mil").value=d.textContent; millerTouched=true; update(true);});
+/* ---------- composer ---------- */
+function nextCode(){const g=$("#grupa").value; const n=RI.filter(r=>r.grupa===g&&r.cat===cat&&r.id!==editId).length+1; return cat+n;}
+function setCat(c){cat=c; vlevel=null; $$("[data-cat]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cat===c?"true":"false")); if(!editId) $("#cod").value=nextCode(); millerTouched=false; update();}
+$$("[data-cat]").forEach(b=>b.onclick=()=>setCat(b.dataset.cat));
+$("#grupa").onchange=()=>{LS.set("atelier.grupa",$("#grupa").value); const g=$("#grupa").value; const last=RI.filter(r=>r.grupa===g).slice(-1)[0]; $("#disc").value=last?last.disc:""; if(!editId) $("#cod").value=nextCode(); };
+["verb","cont","ctx"].forEach(id=>$("#"+id).addEventListener("input",()=>update()));
+$("#mil").onchange=()=>{millerTouched=true; update(true)};
+
+function update(keepMiller){
+  const verb=$("#verb").value.trim(), cont=$("#cont").value.trim(), ctx=$("#ctx").value.trim();
+  const d=detect(verb,cat);
+  // preview sentence
+  const p=$("#preview");
+  if(!verb&&!cont&&!ctx){p.innerHTML='<span class="lead">La finalul disciplinei, studentul</span> <span class="empty">verb · conținut · context</span>';}
+  else{ let s=esc(cont)+(ctx?" "+esc(ctx):""); s=s.replace(/[.\s]+$/,""); p.innerHTML='<span class="lead">La finalul disciplinei, studentul</span> <span class="verb">'+(esc(verb)||"…")+'</span> '+(s||'<span class="empty">conținut · context</span>')+'.'; }
+  // bloom ladder
+  $$("#ladder div").forEach((el,i)=>el.classList.toggle("on",d.level===i+1));
+  const h=$("#verbhint"), bt=$("#bloomtxt");
+  h.className="hint";
+  if(!verb){h.textContent="Un singur verb, la persoana a III-a: ce face studentul."; bt.textContent="Scrieți verbul; nivelul se aprinde aici.";}
+  else if(d.internal){h.className="hint nudge"; h.textContent="Alegeți un verb care se vede: explică, compară, descrie, calculează."; bt.textContent="Înțelegerea se arată printr-o acțiune: explică, exemplifică, compară.";}
+  else if(d.multi){h.className="hint nudge"; h.textContent="Un rezultat, un verb. Al doilea verb devine un rezultat separat."; bt.textContent="";}
+  else if(d.ra){h.className="hint go"; h.textContent="Verb de responsabilitate și autonomie."; bt.textContent="Nivelul Miller după locul observării: la seminar „arată cum”, în stagiu „face”. Gradul de autonomie se scrie în criterii.";}
+  else if(d.level){h.className="hint go"; h.textContent="Verb observabil · nivelul "+d.level+" ("+BLOOM[d.level-1]+")"+(d.dual?". "+d.dual:"."); bt.textContent="Nivelul "+d.level+": "+BLOOM[d.level-1]+".";}
+  else {h.className="hint nudge"; h.textContent="Verb nou. Îl puteți adăuga la nivelul potrivit din „Alege ▾”; până atunci alegeți nivelul Miller manual."; bt.textContent="";}
+  // miller
+  if(!millerTouched&&!keepMiller&&verb){$("#mil").value=suggestMiller(d.level,cat,verb);}
+  const m=$("#mil").value;
+  $$("#millerbar div").forEach(el=>el.classList.toggle("on",el.textContent===m));
+  // suggestions
+  const pkey=cat==="RA"&&m!=="Știe"&&m!=="Știe cum"?"RA":m; const probes=PROBES[pkey]||[];
+  const chipP=x=>{const c=(CUST_P[pkey]||[]).includes(x); return '<span class="cwrap"><button type="button" class="chip'+($("#prb").value===x?" sel":"")+(c?" custom":"")+'" data-prb="'+esc(x)+'">'+esc(x)+'</button>'+(c?'<button type="button" class="cdel" data-pdel="'+esc(x)+'" title="Scoate din listă" aria-label="Scoate '+esc(x)+'">✕</button>':'')+'</span>';};
+  $("#sprb").innerHTML=probes.map(chipP).join("")+'<span class="cadd"><input id="pnew" placeholder="altă probă…" autocomplete="off"><button type="button" id="padd">+ Adaugă</button></span>';
+  const mkey=cat==="RA"?"RA":String(d.level||(cat==="A"?"A0":"C0"));
+  const base=cat==="RA"?METHOD_RA:(METHOD_BY_LEVEL[d.level]||(cat==="A"?["Abilități practice în 4 pași","Simulare","Lucrare practică de laborator"]:["Prelegere interactivă","Seminar cu caz"]));
+  const mets=base.concat((CUST_M[mkey]||[]).filter(x=>!base.includes(x)));
+  const chipM=x=>{const c=(CUST_M[mkey]||[]).includes(x); return '<span class="cwrap"><button type="button" class="chip'+($("#met").value===x?" sel":"")+(c?" custom":"")+'" data-met="'+esc(x)+'">'+esc(x)+'</button>'+(c?'<button type="button" class="cdel" data-mdel="'+esc(x)+'" title="Scoate din listă" aria-label="Scoate '+esc(x)+'">✕</button>':'')+'</span>';};
+  $("#smet").innerHTML=mets.map(chipM).join("")+'<span class="cadd"><input id="mnew" placeholder="altă metodă…" autocomplete="off"><button type="button" id="madd">+ Adaugă</button></span>';
+  $("#sprb").dataset.key=pkey; $("#smet").dataset.key=mkey;
+  $("#save").disabled=store.mode==="pending"||!verb||!cont;
+}
+$("#sprb").addEventListener("click",e=>{
+  if(e.target.closest("#padd")){ const v=addCustomPM("p",$("#sprb").dataset.key,$("#pnew").value); if(v){ $("#prb").value=v; update(true); toast("Proba „"+v+"” a fost adăugată"); } return; }
+  const dl=e.target.closest("[data-pdel]"); if(dl){ removeCustomPM("p",$("#sprb").dataset.key,dl.dataset.pdel); update(true); return; }
+  const b=e.target.closest("[data-prb]"); if(!b) return; $("#prb").value=b.dataset.prb; update(true);});
+$("#smet").addEventListener("click",e=>{
+  if(e.target.closest("#madd")){ const v=addCustomPM("m",$("#smet").dataset.key,$("#mnew").value); if(v){ $("#met").value=v; update(true); toast("Metoda „"+v+"” a fost adăugată"); } return; }
+  const dl=e.target.closest("[data-mdel]"); if(dl){ removeCustomPM("m",$("#smet").dataset.key,dl.dataset.mdel); update(true); return; }
+  const b=e.target.closest("[data-met]"); if(!b) return; $("#met").value=b.dataset.met; update(true);});
+$("#sprb").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.id==="pnew"){ e.preventDefault(); $("#padd").click(); } });
+$("#smet").addEventListener("keydown",e=>{ if(e.key==="Enter"&&e.target.id==="mnew"){ e.preventDefault(); $("#madd").click(); } });
+$("#prb").onchange=()=>update(true); $("#met").onchange=()=>update(true);
+
+function clearForm(){["verb","cont","ctx","anexa","pond"].forEach(id=>$("#"+id).value=""); $("#met").value=""; $("#prb").value=""; $("#mom").value="Pe parcurs"; editId=null; millerTouched=false; $("#editing").hidden=true; $("#save").textContent="Adaugă în matrice"; $("#cod").value=nextCode(); update();}
+$("#clear").onclick=clearForm; $("#canceledit").onclick=clearForm;
+const EXAMPLES=[{"prog": "Medicină", "disc": "Farmacologie I", "anexa": "RI 2 Medicină", "items": [{"cat": "C", "verb": "compară", "cont": "clasele de diuretice", "ctx": "după locul de acțiune în nefron, mecanismul de acțiune și efectul asupra potasemiei", "bloom": 2, "miller": "Știe cum", "proba": "Întrebări scurte pe caz", "metoda": "Învățare bazată pe caz (CBL)", "pond": 15}, {"cat": "A", "verb": "calculează", "cont": "doza de încărcare și de întreținere a unui medicament", "ctx": "pornind de la parametrii farmacocinetici dați într-un caz", "bloom": 3, "miller": "Știe cum", "proba": "OSPE", "metoda": "Învățare în echipă (TBL)", "pond": 20}, {"cat": "RA", "verb": "își argumentează", "cont": "în fața grupei alegerea unui medicament pentru un caz", "ctx": "cântărind beneficiul, riscul și interacțiunile", "bloom": 5, "miller": "Arată cum", "proba": "Prezentare argumentată cu criterii publice", "metoda": "Învățare bazată pe caz (CBL)", "pond": 10}]}, {"prog": "Medicină", "disc": "Cardiologie", "anexa": "RI 5 Medicină", "items": [{"cat": "C", "verb": "explică", "cont": "mecanismele de compensare neuroumorală din insuficiența cardiacă cu fracție de ejecție redusă", "ctx": "și consecințele lor clinice", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "examinează", "cont": "aparatul cardiovascular al unui pacient standardizat", "ctx": "după protocolul de examinare clinică al disciplinei", "bloom": 3, "miller": "Arată cum", "proba": "OSCE", "metoda": "Abilități practice în 4 pași"}, {"cat": "RA", "verb": "comunică", "cont": "pacientului planul de investigații și motivul fiecăreia", "ctx": "sub supravegherea medicului, în stagiul clinic", "bloom": 0, "miller": "Face", "proba": "mini-CEX", "metoda": "La patul bolnavului"}]}, {"prog": "Medicină", "disc": "Chirurgie generală", "anexa": "RI 16 Medicină", "items": [{"cat": "C", "verb": "explică", "cont": "indicațiile și contraindicațiile colecistectomiei laparoscopice", "ctx": "în patologia biliară", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "efectuează", "cont": "o sutură cu fire separate pe model de simulare", "ctx": "folosind instrumentarul adecvat", "bloom": 3, "miller": "Arată cum", "proba": "Simulare cu listă de verificare", "metoda": "Abilități practice în 4 pași"}, {"cat": "RA", "verb": "colaborează", "cont": "cu echipa operatorie în rolul atribuit", "ctx": "sub supraveghere, în blocul operator", "bloom": 0, "miller": "Face", "proba": "Feedback 360°", "metoda": "Stagiu clinic"}]}, {"prog": "Medicină dentară", "disc": "Odontoterapie restauratoare", "anexa": "RI 10 Medicină dentară", "items": [{"cat": "C", "verb": "clasifică", "cont": "leziunile carioase după sistemul ICDAS", "ctx": "pe imagini clinice", "bloom": 2, "miller": "Știe cum", "proba": "Întrebări scurte pe caz", "metoda": "Seminar cu caz"}, {"cat": "A", "verb": "efectuează", "cont": "o restaurare de clasa a II-a din compozit", "ctx": "pe dinte artificial montat pe simulator", "bloom": 3, "miller": "Arată cum", "proba": "Simulare cu listă de verificare", "metoda": "Abilități practice în 4 pași"}, {"cat": "RA", "verb": "respectă", "cont": "protocolul de control al infecțiilor", "ctx": "la fiecare pacient tratat în clinică", "bloom": 0, "miller": "Face", "proba": "Observare cu fișă", "metoda": "Stagiu clinic"}]}, {"prog": "Farmacie", "disc": "Tehnologie farmaceutică", "anexa": "RI 6 Farmacie", "items": [{"cat": "C", "verb": "explică", "cont": "rolul excipienților într-un comprimat", "ctx": "(diluanți, lianți, dezagreganți, lubrifianți)", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "prepară", "cont": "un unguent după o rețetă magistrală", "ctx": "conform Farmacopeei Române și regulilor de bună practică farmaceutică", "bloom": 3, "miller": "Arată cum", "proba": "OSPE", "metoda": "Lucrare practică de laborator"}, {"cat": "RA", "verb": "verifică", "cont": "singur calitatea preparatului (aspect, omogenitate, etichetare)", "ctx": "înainte de a-l preda", "bloom": 5, "miller": "Arată cum", "proba": "Observare cu fișă", "metoda": "Lucrare practică de laborator"}]}, {"prog": "Asistență medicală generală", "disc": "Nursing general", "anexa": "RI 13 AMG", "items": [{"cat": "C", "verb": "descrie", "cont": "etapele procesului de nursing", "ctx": "(culegerea datelor, diagnosticul de nursing, planificarea, implementarea, evaluarea)", "bloom": 1, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "elaborează", "cont": "un plan de îngrijire pentru un pacient imobilizat la pat", "ctx": "pornind de la evaluarea nevoilor, pe un caz scris", "bloom": 6, "miller": "Știe cum", "proba": "Proiect sau temă", "metoda": "Învățare bazată pe caz (CBL)"}, {"cat": "RA", "verb": "își organizează", "cont": "singur intervențiile autonome din planul de îngrijire", "ctx": "în stagiul clinic, în limita rolului propriu", "bloom": 0, "miller": "Face", "proba": "Observare cu fișă", "metoda": "Stagiu clinic"}]}, {"prog": "Moașe", "disc": "Sarcină, naștere și puerperalitate", "anexa": "RI 9 Moașe", "items": [{"cat": "C", "verb": "explică", "cont": "modificările fiziologice ale organismului matern în sarcină", "ctx": "și semnificația lor clinică", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Clasă inversată"}, {"cat": "A", "verb": "efectuează", "cont": "palparea abdominală obstetricală prin cele patru manevre Leopold", "ctx": "pe simulator", "bloom": 3, "miller": "Arată cum", "proba": "OSCE", "metoda": "Simulare"}, {"cat": "RA", "verb": "informează", "cont": "gravida despre semnele care impun prezentarea de urgență la maternitate", "ctx": "la fiecare consultație prenatală din stagiu", "bloom": 0, "miller": "Face", "proba": "Observare cu fișă", "metoda": "Stagiu clinic"}]}, {"prog": "Balneofiziokinetoterapie și recuperare", "disc": "Evaluare osteoarticulară și musculară", "anexa": "RI 14 BFKT", "items": [{"cat": "C", "verb": "explică", "cont": "principiile testingului muscular manual", "ctx": "și semnificația gradelor 0–5", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "măsoară", "cont": "goniometric amplitudinea de mișcare a genunchiului", "ctx": "după protocolul standard", "bloom": 3, "miller": "Arată cum", "proba": "OSCE", "metoda": "Abilități practice în 4 pași"}, {"cat": "RA", "verb": "consemnează", "cont": "rezultatele evaluării în fișa pacientului", "ctx": "în formatul stabilit, la fiecare ședință din stagiu", "bloom": 0, "miller": "Face", "proba": "Portofoliu", "metoda": "Stagiu clinic"}]}, {"prog": "Nutriție și dietetică", "disc": "Evaluarea nutrițională", "anexa": "RI 8 Nutriție și dietetică", "items": [{"cat": "C", "verb": "explică", "cont": "semnificația indicatorilor antropometrici (IMC, circumferința abdominală)", "ctx": "în estimarea riscului cardiometabolic", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "calculează", "cont": "necesarul energetic zilnic al unui pacient", "ctx": "pornind de la vârstă, sex, datele antropometrice și nivelul de activitate fizică", "bloom": 3, "miller": "Știe cum", "proba": "Întrebări scurte pe caz", "metoda": "Învățare în echipă (TBL)"}, {"cat": "RA", "verb": "adaptează", "cont": "recomandările nutriționale la preferințele pacientului și la contextul său cultural", "ctx": "într-o ședință de consiliere simulată", "bloom": 3, "miller": "Arată cum", "proba": "Simulare cu listă de verificare", "metoda": "Simulare"}]}, {"prog": "Bioinginerie", "disc": "Instrumentație biomedicală și măsurări fiziologice", "anexa": "RI 2 Științe inginerești aplicate", "items": [{"cat": "C", "verb": "explică", "cont": "principiul de funcționare al unui electrocardiograf", "ctx": "(electrozi, amplificare, filtrare)", "bloom": 2, "miller": "Știe", "proba": "Întrebări cu răspuns scurt", "metoda": "Prelegere interactivă"}, {"cat": "A", "verb": "etalonează", "cont": "un senzor de presiune", "ctx": "față de un manometru de referință, cu trasarea curbei de etalonare", "bloom": 3, "miller": "Arată cum", "proba": "OSPE", "metoda": "Lucrare practică de laborator"}, {"cat": "RA", "verb": "respectă", "cont": "normele de electrosecuritate", "ctx": "la fiecare montaj experimental cu subiect uman", "bloom": 0, "miller": "Arată cum", "proba": "Observare cu fișă", "metoda": "Lucrare practică de laborator"}]}];
+(function(){const sel=$("#exsel"); let h=""; EXAMPLES.forEach((e,gi)=>{h+='<optgroup label="'+esc(e.prog+" · "+e.disc)+'">'+e.items.map((it,ii)=>'<option value="'+gi+'.'+ii+'">'+esc(it.cat+": "+it.verb+" "+it.cont)+'</option>').join("")+'</optgroup>';}); sel.innerHTML=h;
+ const show=()=>{const [g,i]=sel.value.split(".").map(Number); const e=EXAMPLES[g], it=e.items[i]; $("#extext").innerHTML='La finalul disciplinei, studentul <b>'+esc(it.verb)+'</b> '+esc(it.cont)+(it.ctx?" "+esc(it.ctx):"")+'. <span class="mini">('+esc(e.disc)+"; "+esc(e.anexa)+')</span>';};
+ sel.onchange=show; show();})();
+$("#loadex").onclick=()=>{const [g,i]=$("#exsel").value.split(".").map(Number); const e=EXAMPLES[g], it=e.items[i];
+  if(editId){editId=null; $("#editing").hidden=true; $("#save").textContent="Adaugă în matrice";}
+  setCat(it.cat); $("#disc").value=e.disc+" (exemplu)"; $("#verb").value=it.verb; $("#cont").value=it.cont; $("#ctx").value=it.ctx||""; $("#anexa").value=e.anexa;
+  millerTouched=false; update(); $("#mil").value=it.miller; millerTouched=true; $("#met").value=it.metoda||""; $("#prb").value=it.proba||""; $("#mom").value="Pe parcurs"; $("#pond").value=it.pond??""; update(true);};
+
+$("#save").onclick=async()=>{
+  const verb=$("#verb").value.trim(), cont=$("#cont").value.trim(); if(!verb||!cont) return;
+  const d=detect(verb,cat);
+  const prev=editId?RI.find(r=>r.id===editId):null;
+  const data={grupa:$("#grupa").value, disc:$("#disc").value.trim(), cat, cod:$("#cod").value.trim()||nextCode(), verb, cont, ctx:$("#ctx").value.trim(),
+    bloom:d.level||0, miller:$("#mil").value, metoda:$("#met").value, proba:$("#prb").value, moment:$("#mom").value,
+    pondere:$("#pond").value===""?null:Math.max(0,Math.min(100,+$("#pond").value)), anexa:$("#anexa").value.trim(), ts:prev?prev.ts:Date.now()};
+  $("#save").disabled=true;
+  try{ await store.write("ri",editId,data); toast(editId?"Rezultat actualizat":"Adăugat în matricea grupei"); const keepG=data.grupa, keepD=data.disc; clearForm(); $("#grupa").value=keepG; $("#disc").value=keepD; $("#cod").value=nextCode(); }
+  catch(e){ toast(e&&e.code==="quota_exceeded"?"Spațiul de salvare e plin":"Nu s-a putut salva; încercați din nou"); }
+  update(true);
+};
+
+function editRI(id){const r=RI.find(x=>x.id===id); if(!r) return; editId=id; $("#grupa").value=r.grupa; $("#disc").value=r.disc||""; cat=r.cat; $$("[data-cat]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cat===cat?"true":"false"));
+  $("#cod").value=r.cod; $("#verb").value=r.verb; $("#cont").value=r.cont; $("#ctx").value=r.ctx||""; $("#anexa").value=r.anexa||""; $("#mil").value=r.miller||"Știe"; millerTouched=true;
+  $("#met").value=r.metoda||""; $("#prb").value=r.proba||""; $("#mom").value=r.moment||"Pe parcurs"; $("#pond").value=r.pondere??"";
+  $("#editing").hidden=false; $("#editcode").textContent=r.cod; $("#save").textContent="Salvează modificarea"; location.hash="compune"; update(true); $("#verb").focus();}
+
+/* ---------- matrix ---------- */
+const CATORD={C:0,A:1,RA:2};
+const codeNum=c=>parseInt(String(c).replace(/\D+/g,""))||0;
+function groupsWithData(){return Array.from(new Set(RI.map(r=>r.grupa))).sort((a,b)=>codeNum(a)-codeNum(b));}
+function renderMatrix(){
+  const gs=groupsWithData(); if((gfilter!=="all"&&!gs.includes(gfilter))||(gfilter==="all"&&gs.length===1)) gfilter=gs[0]||"all";
+  $("#gfilters").innerHTML=(gs.length?'<span class="mini" style="margin-right:4px">Arată:</span>':'')+gs.map(g=>{const disc=(RI.filter(r=>r.grupa===g).slice(-1)[0]||{}).disc||""; return '<button class="chip'+(gfilter===g?" sel":"")+'" data-g="'+esc(g)+'">'+esc(g)+(disc?" · "+esc(disc):"")+'</button>';}).join("")+(gs.length>1?'<button class="chip'+(gfilter==="all"?" sel":"")+'" data-g="all">Toate grupele</button>':"");
+  const rows=RI.filter(r=>gfilter==="all"||r.grupa===gfilter).sort((a,b)=>codeNum(a.grupa)-codeNum(b.grupa)||CATORD[a.cat]-CATORD[b.cat]||codeNum(a.cod)-codeNum(b.cod));
+  if(!rows.length){$("#mbody").innerHTML='<tr><td colspan="7" class="empty-state">Matricea se completează din fila „Compune rezultatul”. Fiecare rezultat adăugat apare aici, cu metoda, proba și ponderea lui.</td></tr>'; $("#sum").innerHTML=""; $("#checks").innerHTML=""; return;}
+  let html="", cur=null;
+  rows.forEach(r=>{
+    if(gfilter==="all"&&r.grupa!==cur){cur=r.grupa; html+='<tr class="grouprow"><td colspan="7">'+esc(r.grupa)+(r.disc?" · "+esc(r.disc):"")+'</td></tr>';}
+    const sent='La finalul disciplinei, studentul <b>'+esc(r.verb)+'</b> '+esc(r.cont)+(r.ctx?" "+esc(r.ctx):"")+".";
+    html+='<tr data-id="'+esc(r.id)+'"><td class="code">'+esc(r.cod)+'</td><td class="ri">'+sent+'</td><td>'+(r.bloom?r.bloom+" · "+esc(BLOOM[r.bloom-1]).replace("a-și ","").replace("a ",""):(r.cat==="RA"?"RA":"n.a."))+'<br><span class="mini">Miller: '+esc(r.miller||"")+'</span></td>'+
+      '<td><div class="stack"><select data-f="metoda" aria-label="Metoda"><option value="">metoda…</option>'+METHODS.map(m=>'<option'+(m===r.metoda?" selected":"")+'>'+esc(m)+'</option>').join("")+'</select>'+
+      '<select data-f="proba" aria-label="Proba"><option value="">proba…</option>'+ALLPROBES.map(m=>'<option'+(m===r.proba?" selected":"")+'>'+esc(m)+'</option>').join("")+'</select>'+
+      '<select data-f="moment" aria-label="Momentul">'+["Pe parcurs","Evaluare practică","Evaluare finală"].map(m=>'<option'+(m===r.moment?" selected":"")+'>'+m+'</option>').join("")+'</select></div></td>'+
+      '<td><input class="w" type="number" min="0" max="100" step="5" data-f="pondere" value="'+(r.pondere??"")+'" aria-label="Pondere"></td>'+
+      '<td>'+esc(r.anexa||"")+'</td><td style="white-space:nowrap"><button data-act="edit" title="Editează">✎</button> <button data-act="del" title="Șterge">✕</button></td></tr>';
+  });
+  $("#mbody").innerHTML=html;
+  // summary and checks (per group in view)
+  const g=gfilter==="all"?null:gfilter; const set=g?rows:[];
+  if(!g){$("#sum").innerHTML='<span class="mini">Alegeți o grupă pentru totalul ponderilor și verificări.</span>'; $("#checks").innerHTML=""; return;}
+  const tot=set.reduce((a,r)=>a+(+r.pondere||0),0);
+  const byM={}; set.forEach(r=>{byM[r.moment]=(byM[r.moment]||0)+(+r.pondere||0)});
+  $("#sum").innerHTML='<span class="pill '+(tot===100?"ok":"warn")+'" style="font-size:1rem">Total ponderi: '+tot+'%'+(tot===100?" ✓":"")+'</span>'+Object.entries(byM).map(([k,v])=>'<span class="pill">'+esc(k)+': '+v+'%</span>').join("");
+  const cats=new Set(set.map(r=>r.cat));
+  const noMet=set.filter(r=>!r.metoda).map(r=>r.cod), noPrb=set.filter(r=>!r.proba).map(r=>r.cod), noAnx=set.filter(r=>!r.anexa).map(r=>r.cod);
+  const hasPar=set.some(r=>r.moment==="Pe parcurs"&&(+r.pondere||0)>0);
+  const C=[
+   ["Categorii",["C","A","RA"].every(c=>cats.has(c)),["C","A","RA"].every(c=>cats.has(c))?"C, A și RA sunt toate prezente.":"Adăugați: "+["C","A","RA"].filter(c=>!cats.has(c)).join(", ")+"."],
+   ["Metodă pentru fiecare RI",!noMet.length,noMet.length?"De ales pentru: "+noMet.join(", ")+".":"Fiecare rezultat are o metodă."],
+   ["Probă pentru fiecare RI",!noPrb.length,noPrb.length?"De ales pentru: "+noPrb.join(", ")+".":"Fiecare rezultat are o probă."],
+   ["Evaluare pe parcurs cu pondere",hasPar,hasPar?"Descrisă și ponderată (cerință ARACIS).":"Dați pondere unei probe pe parcurs."],
+   ["Legătura cu Anexa 2",!noAnx.length,noAnx.length?"De notat pentru: "+noAnx.join(", ")+".":"Fiecare rezultat trimite la Anexa 2."]
+  ];
+  $("#checks").innerHTML=C.map(([t,ok,msg])=>'<div class="'+(ok?"ok":"todo")+'"><b>'+esc(t)+(ok?" ✓":"")+'</b>'+esc(msg)+'</div>').join("");
+}
+$("#gfilters").addEventListener("click",e=>{const b=e.target.closest("[data-g]"); if(!b) return; gfilter=b.dataset.g; LS.set("atelier.gfilter",gfilter); renderMatrix();});
+const pendingDel=new Set();
+$("#mbody").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-act]"); if(!b) return; const id=b.closest("tr").dataset.id;
+  if(b.dataset.act==="edit") return editRI(id);
+  if(b.dataset.act==="del"){ if(!pendingDel.has(id)){pendingDel.add(id); b.textContent="Sigur?"; setTimeout(()=>{pendingDel.delete(id); if(b.isConnected) b.textContent="✕"},3000); return;}
+    pendingDel.delete(id); try{await store.del("ri",id); toast("Rezultat șters");}catch(err){toast("Nu s-a putut șterge");} }
+});
+$("#mbody").addEventListener("change",async e=>{
+  const el=e.target.closest("[data-f]"); if(!el) return; const id=el.closest("tr").dataset.id; const r=RI.find(x=>x.id===id); if(!r) return;
+  const val=el.dataset.f==="pondere"?(el.value===""?null:Math.max(0,Math.min(100,+el.value))):el.value;
+  if(r[el.dataset.f]===val) return;
+  const data=Object.assign({},r,{[el.dataset.f]:val}); delete data.id;
+  try{ await store.write("ri",id,data); }catch(err){ toast("Nu s-a putut salva"); }
+});
+$("#copy").onclick=()=>{
+  const rows=RI.filter(r=>gfilter==="all"||r.grupa===gfilter).sort((a,b)=>codeNum(a.grupa)-codeNum(b.grupa)||CATORD[a.cat]-CATORD[b.cat]||codeNum(a.cod)-codeNum(b.cod));
+  const head=["Grupa","Disciplina","Cod RI","Rezultatul învățării","Bloom","Miller","Metoda","Proba","Moment","Pondere (%)","Anexa 2"];
+  const tsv=[head.join("\t")].concat(rows.map(r=>[r.grupa,r.disc,r.cod,"La finalul disciplinei, studentul "+r.verb+" "+r.cont+(r.ctx?" "+r.ctx:"")+".",r.bloom?r.bloom+" "+BLOOM[r.bloom-1]:"n.a.",r.miller,r.metoda,r.proba,r.moment,r.pondere??"",r.anexa].map(x=>String(x??"").replace(/[\t\n]/g," ")).join("\t"))).join("\n");
+  const fallback=()=>{const ta=document.createElement("textarea"); ta.value=tsv; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); let ok=false; try{ok=document.execCommand("copy")}catch(e){} ta.remove(); toast(ok?"Matricea a fost copiată":"Copierea nu e permisă aici");};
+  try{ navigator.clipboard.writeText(tsv).then(()=>toast("Matricea a fost copiată"),fallback); }catch(e){ fallback(); }
+};
+
+/* ---------- feedback ---------- */
+const TIPS={intrebare:"Întrebare",idee:"Idee",revenim:"Revenim"};
+$$("[data-tip]").forEach(b=>b.onclick=()=>{tip=b.dataset.tip; $$("[data-tip]").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"))});
+$("#fbf").value=LS.get("atelier.fbf","open"); $("#fbf").onchange=()=>{LS.set("atelier.fbf",$("#fbf").value); renderFB()};
+$("#fbtext").addEventListener("input",()=>{$("#fbadd").disabled=store.mode==="pending"||!$("#fbtext").value.trim()});
+$("#fbtext").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.isComposing){e.preventDefault(); addFB();}});
+$("#fbadd").onclick=addFB;
+async function addFB(){const t=$("#fbtext").value.trim(); if(!t||store.mode==="pending") return; $("#fbtext").value=""; $("#fbadd").disabled=true;
+  try{ await store.write("fb",null,{text:t,tip,grupa:$("#fbg").value,done:false,ts:Date.now()}); }catch(e){ $("#fbtext").value=t; toast("Nu s-a putut nota"); } $("#fbtext").focus();}
+function renderFB(){
+  const f=$("#fbf").value; const list=FB.filter(x=>f==="all"||!x.done).slice().sort((a,b)=>(a.done-b.done)||(b.ts-a.ts));
+  if(!list.length){$("#fbgrid").innerHTML='<div class="empty-state">'+(FB.length?"Totul a fost discutat.":"Notițele din sală apar aici, mari, pentru proiector.")+'</div>'; return;}
+  $("#fbgrid").innerHTML=list.map(x=>'<article class="note t-'+esc(x.tip)+(x.done?" done":"")+'" data-id="'+esc(x.id)+'"><div class="meta"><span class="pill">'+esc(TIPS[x.tip]||x.tip)+'</span>'+(x.grupa?'<span>'+esc(x.grupa)+'</span>':"")+'<span style="margin-left:auto"></span><button data-fb="done">'+(x.done?"Redeschide":"Discutat")+'</button><button data-fb="del" title="Șterge">✕</button></div><p>'+esc(x.text)+'</p></article>').join("");
+}
+const pendingFbDel=new Set();
+$("#fbgrid").addEventListener("click",async e=>{const b=e.target.closest("[data-fb]"); if(!b) return; const id=b.closest(".note").dataset.id; const x=FB.find(y=>y.id===id); if(!x) return;
+  if(b.dataset.fb==="done"){const d=Object.assign({},x,{done:!x.done}); delete d.id; try{await store.write("fb",id,d)}catch(err){toast("Nu s-a putut salva")}}
+  else { if(!pendingFbDel.has(id)){pendingFbDel.add(id); b.textContent="Sigur?"; setTimeout(()=>{pendingFbDel.delete(id); if(b.isConnected) b.textContent="✕"},3000); return;} pendingFbDel.delete(id); try{await store.del("fb",id)}catch(err){toast("Nu s-a putut șterge")} }
+});
+
+/* ---------- start ---------- */
+applyScale(); show(); setCat("C"); update(); renderMatrix(); renderFB();
+store.init().then(()=>{
+  store.sub("ri","ts",list=>{RI=list; if(!editId) $("#cod").value=nextCode(); renderMatrix();});
+  store.sub("fb","ts",list=>{FB=list; renderFB();});
+  update(true); $("#fbadd").disabled=!$("#fbtext").value.trim();
+});
+})();
+</script>
+
+</body>
+</html>
