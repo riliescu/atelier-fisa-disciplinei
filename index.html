@@ -137,6 +137,9 @@ td input,td select{padding:.3rem .4rem;font-size:.88rem;background:var(--panel)}
 .stack{display:flex;flex-direction:column;gap:5px;min-width:15rem}
 td .w{width:4.5rem}
 .sum{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:14px 0}
+.mnote,.rowsoft{color:var(--muted);font-style:italic;font-size:.92rem}
+.mnote{margin:10px 0 0}
+.rowsoft{display:block;font-size:.85rem;max-width:16rem}
 .checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:14px}
 .checks div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.92rem}
 .checks div.ok{border-color:var(--ok)} .checks div.todo{border-color:var(--gold)}
@@ -255,6 +258,7 @@ td .w{width:4.5rem}
     <thead><tr><th>Cod</th><th>Rezultatul învățării</th><th>Bloom · Miller</th><th>Metoda (secț. 9) · proba și momentul (secț. 11)</th><th>Pondere</th><th>Anexa 2</th><th><span class="sr">Acțiuni</span></th></tr></thead>
     <tbody id="mbody"></tbody>
   </table></div>
+  <p class="mnote" id="mnote" hidden>Verificați alinierea pe fiecare rând: verbul, metoda și proba cer același lucru de la student?</p>
   <div class="checks" id="checks"></div>
   <div class="actions" style="margin-top:14px">
     <button class="primary" id="word">Descarcă Word</button>
@@ -317,6 +321,8 @@ const PROBES={
  "RA":["Prezentare argumentată cu criterii publice","Observare cu fișă","Portofoliu","Feedback 360°","Reflecție scrisă"]
 };
 const PROBE_ALSO={"Știe cum":["OSPE"]}; /* stația OSPE de calcul verifică „știe cum” */
+function probeOff(cat,miller,proba){ if(!proba) return false; const k=cat==="RA"&&miller!=="Știe"&&miller!=="Știe cum"?"RA":miller;
+  const ok=(PROBES[k]||[]).concat(PROBE_ALSO[miller]||[], k==="RA"?(PROBES[miller]||[]):[]); return !ok.includes(proba); }
 const ALLPROBES=Array.from(new Set(Object.values(PROBES).flat()));
 const METHODS=["Prelegere interactivă","Clasă inversată","Învățare bazată pe caz (CBL)","Învățare bazată pe probleme (PBL)","Învățare în echipă (TBL)","Simulare","Abilități practice în 4 pași","Seminar cu caz","Lucrare practică de laborator","La patul bolnavului","Preceptorul într-un minut / SNAPPS","Reflecție scrisă","Feedback structurat","Proiect în echipă","Stagiu clinic"];
 const METHOD_BY_LEVEL={1:["Prelegere interactivă","Clasă inversată"],2:["Prelegere interactivă","Clasă inversată","Învățare bazată pe caz (CBL)"],3:["Lucrare practică de laborator","Abilități practice în 4 pași","Seminar cu caz","Simulare"],4:["Învățare bazată pe caz (CBL)","Învățare în echipă (TBL)","Învățare bazată pe probleme (PBL)"],5:["Învățare în echipă (TBL)","Învățare bazată pe caz (CBL)","Preceptorul într-un minut / SNAPPS"],6:["Proiect în echipă","Învățare bazată pe probleme (PBL)"]};
@@ -564,11 +570,11 @@ function update(keepMiller){
   $("#sprb").dataset.key=pkey; $("#smet").dataset.key=mkey;
   // chosen method and assessment, as they will appear in the matrix
   const mv=$("#met").value, pv=$("#prb").value, mo=$("#mom").value, po=$("#pond").value;
-  let pm;
+  let pm, off=false;
   if(!mv&&!pv) pm='<span class="muted">Metoda și proba: alegeți-le în stânga sau din sugestii.</span>';
   else{ pm='Se învață prin: '+(mv?'<b>'+esc(mv)+'</b>':'<span class="muted">metoda nealeasă</span>')+' · Se evaluează prin: '+(pv?'<b>'+esc(pv)+'</b>, '+esc(mo.toLowerCase())+(po!==""?', '+esc(po)+'%':''):'<span class="muted">proba nealeasă</span>');
-    const okP=probes.concat(PROBE_ALSO[m]||[], pkey==="RA"?(PROBES[m]||[]).concat(CUST_P[m]||[]):[]);
-    if(pv&&!okP.includes(pv)) pm+='<span class="soft">Verificați alinierea: proba se potrivește nivelului „'+esc(m)+'”?</span>'; }
+    off=probeOff(cat,m,pv); }
+  pm+='<span class="soft">Verificați alinierea: verbul, metoda și proba cer același lucru de la student?'+(off?' Proba aleasă se folosește de obicei la alt nivel decât „'+esc(m)+'”.':'')+'</span>';
   $("#pmline").innerHTML=pm;
   $("#save").disabled=store.mode==="pending"||!verb||!cont;
 }
@@ -621,7 +627,8 @@ function renderMatrix(){
   const gs=groupsWithData(); if((gfilter!=="all"&&!gs.includes(gfilter))||(gfilter==="all"&&gs.length===1)) gfilter=gs[0]||"all";
   $("#gfilters").innerHTML=(gs.length?'<span class="mini" style="margin-right:4px">Arată:</span>':'')+gs.map(g=>{const disc=(RI.filter(r=>r.grupa===g).slice(-1)[0]||{}).disc||""; return '<button class="chip'+(gfilter===g?" sel":"")+'" data-g="'+esc(g)+'">'+esc(g)+(disc?" · "+esc(disc):"")+'</button>';}).join("")+(gs.length>1?'<button class="chip'+(gfilter==="all"?" sel":"")+'" data-g="all">Toate grupele</button>':"");
   const rows=RI.filter(r=>gfilter==="all"||r.grupa===gfilter).sort((a,b)=>codeNum(a.grupa)-codeNum(b.grupa)||CATORD[a.cat]-CATORD[b.cat]||codeNum(a.cod)-codeNum(b.cod));
-  if(!rows.length){$("#mbody").innerHTML='<tr><td colspan="7" class="empty-state">Matricea se completează din fila „Compune rezultatul”. Fiecare rezultat adăugat apare aici, cu metoda, proba și ponderea lui.</td></tr>'; $("#sum").innerHTML=""; $("#checks").innerHTML=""; return;}
+  if(!rows.length){$("#mbody").innerHTML='<tr><td colspan="7" class="empty-state">Matricea se completează din fila „Compune rezultatul”. Fiecare rezultat adăugat apare aici, cu metoda, proba și ponderea lui.</td></tr>'; $("#sum").innerHTML=""; $("#checks").innerHTML=""; $("#mnote").hidden=true; return;}
+  $("#mnote").hidden=false;
   let html="", cur=null;
   rows.forEach(r=>{
     if(gfilter==="all"&&r.grupa!==cur){cur=r.grupa; html+='<tr class="grouprow"><td colspan="7">'+esc(r.grupa)+(r.disc?" · "+esc(r.disc):"")+'</td></tr>';}
@@ -629,7 +636,7 @@ function renderMatrix(){
     html+='<tr data-id="'+esc(r.id)+'"><td class="code">'+esc(r.cod)+'</td><td class="ri">'+sent+'</td><td>'+(r.bloom?r.bloom+" · "+esc(BLOOM[r.bloom-1]).replace("a-și ","").replace("a ",""):(r.cat==="RA"?"RA":"n.a."))+'<br><span class="mini">Miller: '+esc(r.miller||"")+'</span></td>'+
       '<td><div class="stack"><select data-f="metoda" aria-label="Metoda"><option value="">metoda…</option>'+METHODS.map(m=>'<option'+(m===r.metoda?" selected":"")+'>'+esc(m)+'</option>').join("")+'</select>'+
       '<select data-f="proba" aria-label="Proba"><option value="">proba…</option>'+ALLPROBES.map(m=>'<option'+(m===r.proba?" selected":"")+'>'+esc(m)+'</option>').join("")+'</select>'+
-      '<select data-f="moment" aria-label="Momentul">'+["Pe parcurs","Evaluare practică","Evaluare finală"].map(m=>'<option'+(m===r.moment?" selected":"")+'>'+m+'</option>').join("")+'</select></div></td>'+
+      '<select data-f="moment" aria-label="Momentul">'+["Pe parcurs","Evaluare practică","Evaluare finală"].map(m=>'<option'+(m===r.moment?" selected":"")+'>'+m+'</option>').join("")+'</select>'+(probeOff(r.cat,r.miller,r.proba)?'<span class="rowsoft">Proba se folosește de obicei la alt nivel decât „'+esc(r.miller)+'”.</span>':'')+'</div></td>'+
       '<td><input class="w" type="number" min="0" max="100" step="5" data-f="pondere" value="'+(r.pondere??"")+'" aria-label="Pondere"></td>'+
       '<td>'+esc(r.anexa||"")+'</td><td style="white-space:nowrap"><button data-act="edit" title="Editează">✎</button> <button data-act="del" title="Șterge">✕</button></td></tr>';
   });
