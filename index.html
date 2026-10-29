@@ -164,8 +164,7 @@ td .w{width:4.5rem}
     <a href="#feedback" data-view="feedback">3 · Ce spune sala</a>
   </nav>
   <div class="tools">
-    <button class="ghost" id="fbind" title="Salvează datele într-un fișier .json, actualizat la fiecare modificare">Fișier de date</button>
-    <button class="ghost" id="fopen" title="Încarcă date dintr-un fișier .json">Deschide date</button>
+    <button class="ghost" id="fopen" title="Adaugă în tabel datele dintr-un fișier .json salvat anterior">Importă date</button>
     <button class="ghost" id="fdown" title="Descarcă o copie a datelor">Descarcă copie</button>
     <input type="file" id="fpick" accept=".json,application/json" hidden>
     <span id="status" class="pill">Se încarcă…</span>
@@ -360,67 +359,102 @@ function suggestMiller(level,cat,verb){
 }
 
 /* ---------- storage: shared db when available, this browser otherwise ---------- */
+const API="https://script.google.com/macros/s/AKfycbzBDDzR50g9yON02CcKWhC-LHX7M5aISXZiO_uvi3-2YQon8wD2aJej1IW9ZWsWdgvqFQ/exec";
+let suppressCC=false;
 const store=(function(){
-  let mode="pending", fileHandle=null, chain=Promise.resolve();
+  let mode="pending", key=null, timer=null, flushing=false, lastSig="";
+  try{ const m=(location.hash||"").match(/cheie=([A-Za-z0-9_\-]+)/); if(m){ LS.set("atelier.cheie",m[1]); history.replaceState(null,"",location.pathname+location.search); } }catch(e){}
+  key=LS.get("atelier.cheie",null);
   const local={ri:LS.get("atelier.ri",[]),fb:LS.get("atelier.fb",[])};
+  let queue=LS.get("atelier.coada",[]);
   const subs={ri:[],fb:[]};
   const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
   const snapshot=()=>({aplicatie:"Atelierul fișei disciplinei",versiune:1,salvat:new Date().toISOString(),ri:local.ri,fb:local.fb,verbe:CUSTOM,probe:CUST_P,metode:CUST_M});
-  async function writeFile(){
-    if(!fileHandle) return;
-    try{
-      if(fileHandle.queryPermission&&(await fileHandle.queryPermission({mode:"readwrite"}))!=="granted"){
-        if((await fileHandle.requestPermission({mode:"readwrite"}))!=="granted"){setStatus("Fișierul nu poate fi scris; datele rămân în browser","warn");return;}
-      }
-      const w=await fileHandle.createWritable(); await w.write(JSON.stringify(snapshot(),null,1)); await w.close();
-      setStatus("Salvat în browser și în "+fileHandle.name,"ok");
-    }catch(e){ setStatus("Salvarea în fișier a eșuat; datele rămân în browser","warn"); }
-  }
-  function emit(k){ LS.set("atelier."+k,local[k]); subs[k].forEach(f=>f(local[k].slice())); chain=chain.then(writeFile); }
+  const saveQ=()=>LS.set("atelier.coada",queue);
+  function emit(k){ LS.set("atelier."+k,local[k]); subs[k].forEach(f=>f(local[k].slice())); }
   function sub(k,orderField,cb){ subs[k].push(cb); cb(local[k].slice()); }
-  async function write(k,id,data){
-    if(id){const i=local[k].findIndex(x=>x.id===id); if(i>=0) local[k][i]=Object.assign({id},data); else local[k].push(Object.assign({id},data));}
-    else local[k].push(Object.assign({id:uid()},data));
-    local[k].sort((a,b)=>(a.ts||0)-(b.ts||0)); emit(k);
+  function enqueue(op){ queue=queue.filter(q=>!(q.col===op.col&&q.id===op.id)); queue.push(op); saveQ(); flush(); }
+  async function post(body){
+    const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({key},body))});
+    return r.json();
   }
-  async function del(k,id){ local[k]=local[k].filter(x=>x.id!==id); emit(k); }
+  async function flush(){
+    if(mode!=="remote"||flushing) return; flushing=true;
+    try{
+      while(queue.length){
+        const op=queue[0]; const res=await post(op);
+        if(!res||!res.ok){ if(res&&res.error==="cheie"){ setStatus("Cheie de acces greșită; datele rămân în browser","warn"); mode="local"; } break; }
+        queue.shift(); saveQ();
+      }
+      if(!queue.length&&mode==="remote") setStatus("Salvat în Google Sheet","ok");
+    }catch(e){ setStatus("Fără conexiune; salvat local, se trimite la reconectare","warn"); }
+    finally{ flushing=false; }
+  }
+  function applyMeta(meta){
+    const get=id=>{ const d=meta.find(x=>x.id===id); return d&&d.v&&typeof d.v==="object"?d.v:null; };
+    const pend=new Set(queue.filter(q=>q.col==="meta").map(q=>q.id));
+    suppressCC=true;
+    try{
+      const V=get("verbe"); if(V&&!pend.has("verbe")){ for(const k in CUSTOM) (CUSTOM[k]||[]).slice().forEach(v=>{ if(!(V[k]||[]).includes(v)) removeCustom(k,v,true); }); for(const k in V) (V[k]||[]).forEach(v=>addCustom(k,String(v))); }
+      const P=get("probe"); if(P&&!pend.has("probe")){ for(const k in CUST_P) (CUST_P[k]||[]).slice().forEach(v=>{ if(!(P[k]||[]).includes(v)) removeCustomPM("p",k,v); }); for(const k in P) (P[k]||[]).forEach(v=>addCustomPM("p",k,String(v))); }
+      const M=get("metode"); if(M&&!pend.has("metode")){ for(const k in CUST_M) (CUST_M[k]||[]).slice().forEach(v=>{ if(!(M[k]||[]).includes(v)) removeCustomPM("m",k,v); }); for(const k in M) (M[k]||[]).forEach(v=>addCustomPM("m",k,String(v))); }
+    } finally { suppressCC=false; }
+  }
+  async function pull(){
+    if(mode!=="remote") return;
+    try{
+      const r=await fetch(API+"?op=all&key="+encodeURIComponent(key)); const d=await r.json();
+      if(!d||!d.ok){ if(d&&d.error==="cheie"){ setStatus("Cheie de acces greșită; datele rămân în browser","warn"); mode="local"; } return; }
+      const sig=JSON.stringify([d.ri,d.fb,d.meta]); 
+      if(sig!==lastSig){
+        lastSig=sig;
+        for(const k of ["ri","fb"]){
+          const m=new Map(d[k].map(x=>[x.id,x]));
+          queue.filter(q=>q.col===k).forEach(q=>{ if(q.op==="put") m.set(q.id,Object.assign({id:q.id},q.doc)); else m.delete(q.id); });
+          const next=Array.from(m.values()).sort((a,b)=>(a.ts||0)-(b.ts||0));
+          if(JSON.stringify(next)!==JSON.stringify(local[k])){ local[k]=next; emit(k); }
+        }
+        applyMeta(d.meta||[]);
+      }
+      if(!queue.length) setStatus("Salvat în Google Sheet","ok");
+      if(queue.length) flush();
+    }catch(e){ setStatus("Fără conexiune; salvat local, se trimite la reconectare","warn"); }
+  }
+  async function write(k,id,data){
+    id=id||uid();
+    const i=local[k].findIndex(x=>x.id===id); const doc=Object.assign({id},data);
+    if(i>=0) local[k][i]=doc; else local[k].push(doc);
+    local[k].sort((a,b)=>(a.ts||0)-(b.ts||0)); emit(k);
+    if(mode==="remote"||key) enqueue({op:"put",col:k,id,doc:data});
+  }
+  async function del(k,id){ local[k]=local[k].filter(x=>x.id!==id); emit(k); if(mode==="remote"||key) enqueue({op:"del",col:k,id}); }
+  function pushMeta(){ if(!(mode==="remote"||key)) return; enqueue({op:"put",col:"meta",id:"verbe",doc:{v:CUSTOM}}); enqueue({op:"put",col:"meta",id:"probe",doc:{v:CUST_P}}); enqueue({op:"put",col:"meta",id:"metode",doc:{v:CUST_M}}); }
   function download(){
     const blob=new Blob([JSON.stringify(snapshot(),null,1)],{type:"application/json"});
     const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="atelier_date_"+new Date().toISOString().slice(0,10)+".json";
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),3000);
   }
-  async function bind(){
-    if(!window.showSaveFilePicker){ download(); toast("Browserul nu permite salvarea directă; s-a descărcat o copie"); return; }
-    try{
-      const h=await window.showSaveFilePicker({suggestedName:"atelier_date.json",types:[{description:"Date atelier",accept:{"application/json":[".json"]}}]});
-      try{ const f=await h.getFile(); if(f.size>0){ const d=JSON.parse(await f.text()); fileHandle=h; merge(d); toast("Fișierul avea deja date; au fost păstrate și unite cu cele din browser"); return; } }catch(err){ /* fișier nou sau gol */ }
-      fileHandle=h; await writeFile(); toast("Datele se salvează și în "+fileHandle.name);
-    }
-    catch(e){ /* anulat */ }
-  }
   function merge(d){
     if(!d||!Array.isArray(d.ri)||!Array.isArray(d.fb)) throw new Error("format");
-    for(const k of ["ri","fb"]){ const m=new Map(local[k].map(x=>[x.id,x])); d[k].forEach(x=>{ if(x&&x.id) m.set(x.id,x); }); local[k]=Array.from(m.values()).sort((a,b)=>(a.ts||0)-(b.ts||0)); }
+    d.ri.forEach(x=>{ if(x&&x.id){ const o=Object.assign({},x); delete o.id; write("ri",x.id,o); } });
+    d.fb.forEach(x=>{ if(x&&x.id){ const o=Object.assign({},x); delete o.id; write("fb",x.id,o); } });
     if(d.verbe&&typeof d.verbe==="object"){ for(const k in d.verbe) (Array.isArray(d.verbe[k])?d.verbe[k]:[]).forEach(v=>addCustom(k,String(v))); }
     if(d.probe&&typeof d.probe==="object"){ for(const k in d.probe) (Array.isArray(d.probe[k])?d.probe[k]:[]).forEach(v=>addCustomPM("p",k,String(v))); }
     if(d.metode&&typeof d.metode==="object"){ for(const k in d.metode) (Array.isArray(d.metode[k])?d.metode[k]:[]).forEach(v=>addCustomPM("m",k,String(v))); }
-    emit("ri"); emit("fb");
     toast("Date încărcate: "+d.ri.length+" rezultate, "+d.fb.length+" bilete");
   }
-  async function openData(){
-    if(window.showOpenFilePicker){
-      try{ const [h]=await window.showOpenFilePicker({types:[{description:"Date atelier",accept:{"application/json":[".json"]}}]}); const f=await h.getFile(); fileHandle=h; merge(JSON.parse(await f.text())); }
-      catch(e){ if(e&&e.name==="AbortError") return; toast("Fișierul nu e un fișier de date al atelierului"); }
-    } else $("#fpick").click();
-  }
+  function openData(){ $("#fpick").click(); }
   $("#fpick").addEventListener("change",async e=>{ const f=e.target.files&&e.target.files[0]; if(!f) return; try{ merge(JSON.parse(await f.text())); }catch(err){ toast("Fișierul nu e un fișier de date al atelierului"); } e.target.value=""; });
   return {
-    async init(){ mode="local"; setStatus(local.ri.length||local.fb.length?"Date salvate în browser":"Salvare în browser","ok"); },
-    sub, write, del, bind, openData, download, touch(){ chain=chain.then(writeFile); }, get mode(){return mode}
+    async init(){
+      if(key&&API.startsWith("https://")){ mode="remote"; setStatus("Se conectează la Google Sheet…",""); await pull(); timer=setInterval(pull,5000); window.addEventListener("online",()=>{flush();pull();}); document.addEventListener("visibilitychange",()=>{ if(!document.hidden) pull(); }); }
+      else { mode="local"; setStatus("Fără cheie de acces: datele rămân doar în acest browser","warn"); }
+    },
+    sub, write, del, openData, download, pushMeta, get mode(){return mode}
   };
 })();
-onCustomChange=()=>store.touch();
-$("#fbind").onclick=()=>store.bind(); $("#fopen").onclick=()=>store.openData(); $("#fdown").onclick=()=>store.download();
+onCustomChange=()=>{ if(!suppressCC) store.pushMeta(); };
+$("#fopen").onclick=()=>store.openData(); $("#fdown").onclick=()=>store.download();
 
 function setStatus(t,cls){const s=$("#status"); s.textContent=t; s.className="pill "+(cls||"");}
 function toast(t){const el=$("#toast"); el.textContent=t; el.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>el.hidden=true,1800);}

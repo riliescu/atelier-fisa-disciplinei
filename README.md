@@ -13,7 +13,9 @@ Pagina: https://riliescu.github.io/atelier-fisa-disciplinei/
 
 ## Unde se păstrează datele
 
-Pagina rulează în întregime în browser și nu trimite date nicăieri. Datele rămân în memoria browserului de pe calculatorul folosit. Butonul „Fișier de date” le salvează și într-un fișier `.json` ales de utilizator, actualizat la fiecare modificare (Chrome și Edge); „Deschide date” încarcă un astfel de fișier, iar „Descarcă copie” salvează o copie.
+Deschisă cu linkul de acces primit de la autor, pagina salvează automat fiecare modificare într-un Google Sheet al autorului, printr-un script care are acces doar la acea foaie. Toți cei care folosesc linkul de acces văd aceleași date, actualizate la câteva secunde. Dacă internetul cade, modificările se păstrează în browser și se trimit singure la reconectare.
+
+Deschisă fără linkul de acces, pagina nu trimite date nicăieri: ele rămân doar în browserul de pe calculatorul folosit. „Descarcă copie” salvează datele într-un fișier `.json`, iar „Importă date” încarcă un astfel de fișier.
 
 ## Autor
 
