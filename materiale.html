@@ -214,7 +214,7 @@ host.innerHTML = S.map(s => `<section id="${s.id}" aria-labelledby="${s.id}-h">
     </ul>
     <div class="row">${FORM_URL
       ? `<a class="btn solid" href="${FORM_URL}" target="_blank" rel="noopener">Încarcă fișa</a>`
-      : `<span class="btn" aria-disabled="true" style="opacity:.6;cursor:default">Formularul de predare se deschide pe 7 noiembrie</span>`}</div>
+      : `<span class="btn" aria-disabled="true" style="opacity:.6;cursor:default;white-space:normal;text-align:center">Formularul de predare se deschide pe 7 noiembrie</span>`}</div>
     <p class="d" style="color:var(--muted);font-size:14px">Formularul cere autentificarea cu contul @umfiasi.ro. Dacă nu puteți intra, trimiteți fișierul la <code>radu.iliescu@umfiasi.ro</code>, cu subiectul „Fișa DDMF, Nume Prenume”.</p>
   </div>` : ""}
 </section>`).join("");
