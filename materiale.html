@@ -61,6 +61,15 @@ ul.files{list-style:none;margin:0;padding:0}
 .annex{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:10px}
 .annex .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .annex select{flex:1 1 260px;min-width:0;font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink)}
+.atelier{margin-top:22px;border:2px solid var(--accent);border-radius:12px;background:var(--accent-soft);padding:18px 20px;display:grid;gap:12px}
+.atelier .at-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.atelier .eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.atelier h2{font-size:24px;margin-top:2px}
+.at-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.at-item{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:12px 14px;display:grid;gap:6px;align-content:start;min-width:0}
+.at-k{font-weight:600;color:var(--ink)}
+.at-item p{font-size:15px;color:var(--muted)}
+.at-item p.at-use{color:var(--accent);font-weight:600;font-size:14px}
 .dates{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .dates .tag{margin:0 8px 0 0;font-variant-numeric:tabular-nums}
 .annex code{font-family:var(--f-mono);font-size:13px;color:var(--ink);user-select:all}
@@ -91,9 +100,37 @@ ul.files{list-style:none;margin:0;padding:0}
     <li><strong>Descarcă</strong> salvează fișierul pe dispozitiv. Cărțile au 6–26 MB; pe date mobile, preferați Wi-Fi.</li>
     <li>Pentru tot pachetul odată, deschideți folderul și alegeți <strong>Descărcare</strong> din meniul lui (⋮): primiți o arhivă .zip.</li>
   </ol>
-  <p class="tip">Începeți cu manualul cursului (Literatură, 00). Tema individuală, fișa disciplinei pe care o predați, are termen luni, 7 decembrie 2026; totul despre ea este în secțiunea <a href="#tema">Tema</a>.</p>
+  <p class="tip">Începeți cu manualul cursului (Literatură, 00). Tema individuală, fișa disciplinei pe care o predați, are termen luni, 7 decembrie 2026; totul despre ea este în secțiunea <a href="#tema">Tema</a>, iar <a href="#atelier">atelierul</a> vă ajută să o scrieți.</p>
   <div><a class="btn solid" href="https://drive.google.com/drive/folders/1cm4y_nsmQN5AS_DIKFO7SR82EDhmF3l4" target="_blank" rel="noopener">Deschide folderul complet</a></div>
 </div>
+
+<section class="atelier" id="atelier" aria-labelledby="atelier-h">
+  <div class="at-head">
+    <div>
+      <div class="eyebrow">Pagina de lucru de la curs</div>
+      <h2 id="atelier-h">Atelierul fișei disciplinei</h2>
+    </div>
+    <a class="btn solid" href="https://riliescu.github.io/atelier-fisa-disciplinei/" target="_blank" rel="noopener">Deschide atelierul</a>
+  </div>
+  <p>Atelierul vă ajută la partea cea mai grea a temei: rezultatele învățării, probele și matricea de corelare. Lucrați-le aici, apoi treceți-le în fișa Word.</p>
+  <div class="at-grid">
+    <div class="at-item">
+      <div class="at-k">Fila 1 · Compune rezultatul</div>
+      <p>Scrieți fiecare rezultat după formula „La final, studentul + verb + conținut + context”. Pagina arată nivelul Bloom al verbului, propune nivelul Miller, proba și metoda potrivite și vă întreabă dacă verbul, metoda și proba cer același lucru de la student.</p>
+      <p class="at-use">Pentru secțiunile 7, 11 și 9 ale fișei.</p>
+    </div>
+    <div class="at-item">
+      <div class="at-k">Fila 2 · Matricea</div>
+      <p>Rezultatele se adună într-un tabel cu metoda, proba, momentul, ponderea și rândul din Anexa 2, cu verificări (ponderile trebuie să dea 100%). <strong>Descarcă Word</strong> vă dă matricea gata de lipit la finalul fișei.</p>
+      <p class="at-use">Pentru matricea de corelare.</p>
+    </div>
+    <div class="at-item">
+      <div class="at-k">Unde rămâne ce scrieți</div>
+      <p>Doar în browserul de pe calculatorul folosit; nu ajunge la nimeni altcineva. Lucrați pe același calculator sau, ca să continuați pe altul, folosiți <strong>Descarcă copie</strong> și apoi <strong>Importă date</strong>.</p>
+      <p class="at-use">Salvați o copie la sfârșitul fiecărei sesiuni de lucru.</p>
+    </div>
+  </div>
+</section>
 
 <div class="tools">
   <label for="q" class="tag" style="margin:0">Caută</label>
@@ -101,12 +138,6 @@ ul.files{list-style:none;margin:0;padding:0}
 </div>
 
 <div id="sections"></div>
-
-<section aria-labelledby="atelier-h">
-  <div class="sec-head"><h2 id="atelier-h">Pagina de lucru</h2></div>
-  <p class="lead">Atelierul fișei disciplinei, folosit la curs, rămâne deschis. Ce scrieți acolo se păstrează doar în browserul dumneavoastră; din fila 2 puteți descărca matricea în Word.</p>
-  <p style="margin-top:10px"><a class="btn" href="https://riliescu.github.io/atelier-fisa-disciplinei/" target="_blank" rel="noopener">Deschide atelierul</a></p>
-</section>
 
 <div class="note">
   <p>Cărțile și ghidurile din secțiunea Literatură sunt puse la dispoziție doar participanților la modul, pentru studiu individual. Vă rugăm să nu le redistribuiți.</p>
@@ -153,7 +184,7 @@ const S = [
   ["5","Standardele specifice ARACIS 2025 pentru licență","Ce trebuie să conțină fișa disciplinei, după standardele de acreditare.","PDF · 0,6 MB","1-gAY8QRBAQBxc9EwxJYoqe_5VgZA5KRM"],
   ["6","Exemple din alte programe","Rezultate ale învățării scrise la nivel de disciplină, din nouă discipline.","PDF · 0,1 MB","1300i5pulAfl18k6_Ldjxdzzbf4shPZJL"]
  ]},
- {id:"tema", title:"Tema: fișa disciplinei proprii", lead:"Fișa completă a disciplinei pe care o predați, cu matricea de corelare la final, într-un singur fișier Word. Se notează individual, cu baremul probei E2 (50 de puncte).", items:[
+ {id:"tema", title:"Tema: fișa disciplinei proprii", lead:"Fișa completă a disciplinei pe care o predați, cu matricea de corelare la final, într-un singur fișier Word. Se notează individual, cu baremul probei E2 (50 de puncte). Rezultatele, probele și matricea le lucrați cel mai ușor în atelier (mai sus).", items:[
   ["0","Cum construiți fișa","Ce predați, cei nouă pași, baremul, termenele și ce faceți dacă nu puteți încărca.","PDF · 2 pagini","1rsaIvJxcE2UFmErZv7xZpH-imLQ9Y56P"],
   ["1","Fișa disciplinei proprii, modelul de completat","Fișa UMF completă (secțiunile 1–11), cu explicații la fiecare secțiune și matricea de corelare la final. Salvați-o ca Nume_Prenume_Disciplina.docx.","Word (.docx) · editabil","14CDuHIX3blVCAoqumX5LuWeDc07wGaq7"]
  ]}
