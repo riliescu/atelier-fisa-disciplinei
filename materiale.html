@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Materiale Modul I DDMF</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; a course-reader index, sections in the order the module uses them, each file a row with open / download */
+:root{
+  --bg:#f5f6f8; --surface:#ffffff; --ink:#1c2229; --muted:#5b6672; --line:#dde1e6;
+  --accent:#7a1f2b; --accent-soft:#f3e6e8; --chip:#eef0f3;
+  --f-display:"Spectral",Georgia,"Times New Roman",serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",Consolas,ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14181d; --surface:#1b2027; --ink:#e7eaee; --muted:#9aa5b1; --line:#2c333c;
+  --accent:#e08a97; --accent-soft:#3a2328; --chip:#252b33; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14181d; --surface:#1b2027; --ink:#e7eaee; --muted:#9aa5b1; --line:#2c333c;
+  --accent:#e08a97; --accent-soft:#3a2328; --chip:#252b33; color-scheme:dark}
+html{-webkit-text-size-adjust:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
+.wrap{max-width:860px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+header .eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--f-display);font-weight:600;font-size:clamp(26px,4.4vw,36px);line-height:1.15;margin:6px 0 6px;text-wrap:balance}
+.meta{color:var(--muted);margin:0}
+h2{font-family:var(--f-display);font-weight:600;font-size:22px;margin:0;text-wrap:balance}
+h3{font-family:var(--f-body);font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:18px 0 6px}
+p{margin:0}
+.how{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;display:grid;gap:12px}
+.how ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.how .tip{font-size:14px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;gap:6px;font:600 14px/1 var(--f-body);padding:9px 14px;border-radius:7px;text-decoration:none;border:1px solid var(--accent);color:var(--accent);background:transparent;white-space:nowrap}
+.btn.solid{background:var(--accent);color:var(--surface)}
+.btn:hover{background:var(--accent-soft)} .btn.solid:hover{filter:brightness(1.08);background:var(--accent)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:26px 0 8px}
+.tools input{flex:1 1 240px;min-width:0;font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink)}
+section{margin-top:30px}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:6px}
+.sec-head .count{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.lead{color:var(--muted);font-size:15px;margin-top:8px}
+ul.files{list-style:none;margin:0;padding:0}
+.file{display:grid;grid-template-columns:3.2em 1fr auto;gap:4px 14px;align-items:start;padding:14px 0;border-bottom:1px solid var(--line)}
+.file .no{font-family:var(--f-mono);font-size:13px;color:var(--accent);padding-top:2px}
+.file .body{min-width:0}
+.file .t{font-weight:600}
+.file .d{color:var(--muted);font-size:15px;margin-top:2px}
+.file .fmt{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-top:4px}
+.file .act{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:11px;background:var(--chip);border-radius:4px;padding:1px 6px;margin-left:6px;color:var(--muted);vertical-align:2px}
+.annex{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:grid;gap:10px}
+.annex .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.annex select{flex:1 1 260px;min-width:0;font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:var(--bg);color:var(--ink)}
+.dates{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.dates .tag{margin:0 8px 0 0;font-variant-numeric:tabular-nums}
+.annex code{font-family:var(--f-mono);font-size:13px;color:var(--ink);user-select:all}
+.note{margin-top:30px;font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;display:grid;gap:8px}
+.contact{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.contact code{font-family:var(--f-mono);font-size:13px;color:var(--ink);user-select:all}
+.copy{font:600 12px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:5px;padding:3px 8px;cursor:pointer}
+.empty{color:var(--muted);padding:12px 0}
+@media (max-width:560px){
+  .file{grid-template-columns:2.4em 1fr}
+  .file .act{grid-column:2;justify-content:flex-start;margin-top:6px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="eyebrow">UMF „Grigore T. Popa” Iași · Curs postuniversitar de pregătire psihopedagogică</div>
+  <h1>Modul I: Didactica disciplinelor medico-farmaceutice</h1>
+  <p class="meta">31.10–1.11 și 7–8.11.2026 · Liviu Oprea, Radu Iliescu · 5 credite</p>
+</header>
+
+<div class="how" aria-labelledby="how-h">
+  <h2 id="how-h">Cum folosiți pagina</h2>
+  <ol>
+    <li><strong>Deschide</strong> afișează documentul în browser, într-o filă nouă. Merge și pe telefon.</li>
+    <li><strong>Descarcă</strong> salvează fișierul pe dispozitiv. Cărțile au 6–26 MB; pe date mobile, preferați Wi-Fi.</li>
+    <li>Pentru tot pachetul odată, deschideți folderul și alegeți <strong>Descărcare</strong> din meniul lui (⋮): primiți o arhivă .zip.</li>
+  </ol>
+  <p class="tip">Începeți cu manualul cursului (Literatură, 00). Tema individuală, fișa disciplinei pe care o predați, are termen luni, 7 decembrie 2026; totul despre ea este în secțiunea <a href="#tema">Tema</a>.</p>
+  <div><a class="btn solid" href="https://drive.google.com/drive/folders/1cm4y_nsmQN5AS_DIKFO7SR82EDhmF3l4" target="_blank" rel="noopener">Deschide folderul complet</a></div>
+</div>
+
+<div class="tools">
+  <label for="q" class="tag" style="margin:0">Caută</label>
+  <input id="q" type="search" placeholder="Titlu, autor sau temă (de ex. Miller, evaluare, AMEE)" autocomplete="off">
+</div>
+
+<div id="sections"></div>
+
+<section aria-labelledby="atelier-h">
+  <div class="sec-head"><h2 id="atelier-h">Pagina de lucru</h2></div>
+  <p class="lead">Atelierul fișei disciplinei, folosit la curs, rămâne deschis. Ce scrieți acolo se păstrează doar în browserul dumneavoastră; din fila 2 puteți descărca matricea în Word.</p>
+  <p style="margin-top:10px"><a class="btn" href="https://riliescu.github.io/atelier-fisa-disciplinei/" target="_blank" rel="noopener">Deschide atelierul</a></p>
+</section>
+
+<div class="note">
+  <p>Cărțile și ghidurile din secțiunea Literatură sunt puse la dispoziție doar participanților la modul, pentru studiu individual. Vă rugăm să nu le redistribuiți.</p>
+  <div class="contact">Întrebări:
+    <code>liviu.oprea@umfiasi.ro</code><button class="copy" type="button" data-copy="liviu.oprea@umfiasi.ro">Copiază</button>
+    <code>radu.iliescu@umfiasi.ro</code><button class="copy" type="button" data-copy="radu.iliescu@umfiasi.ro">Copiază</button>
+  </div>
+</div>
+</div>
+
+<script>
+const V = id => "https://drive.google.com/file/d/" + id + "/view";
+const D = id => "https://drive.google.com/uc?export=download&id=" + id;
+const S = [
+ {id:"prez", title:"Prezentări", lead:"Deck000–Deck2 corespund primului weekend; Deck3 și Deck4 sunt pentru zilele 3 și 4 (7 și 8 noiembrie).", items:[
+  ["Deck000","Prezentarea modulului","Obiectivele, programul pe zile, probele și condițiile de promovare.","PDF · 13 slide-uri","1PopeHJfQvUlozWYL35N83SlLBvWTNiwD"],
+  ["Deck0","Cum învață studenții, ce face profesorul","Cunoștințe anterioare, memoria de lucru, reamintirea, învățarea adulților, rolurile profesorului, piramida lui Miller, responsabilitate și autonomie.","PDF · 29 slide-uri","14nfLt1bp2jaunee5-wqDzkDoV0badr3l"],
+  ["Deck1","Fișa disciplinei, pas cu pas","Rezultatele învățării pe cele trei categorii, verbe Bloom, niveluri Miller, matricea de corelare.","PDF · 26 slide-uri","1XDUukPeOi1X02Wbpk9-vfLDbYZvHyRws"],
+  ["Deck2","Metode de predare și evaluare","Întâi evaluarea (probe, ponderi, secțiunea 11), apoi metodele structurate și competențele transversale (secțiunea 9).","PDF · 28 slide-uri","19nNg-a8SQ7AdnzSsD1021VEZ09MuBZiJ"],
+  ["Deck3","Ce nu se standardizează","Curriculumul ascuns și modelul de rol, întrebările care cer gândire, gândirea critică în fișă.","PDF · 16 slide-uri · ziua 3","1z63RrVqsiEuFUF3_U6HIIY_GEJs3mjWu"],
+  ["Deck4","Din fișa de lucru în fișa reală","Prezentările grupelor, proba E4, aprobarea fișei, evaluarea modulului.","PDF · 17 slide-uri · ziua 4","1-Mad8BVGmhpNch4X1-dTHwJgbVRmy0mB"]
+ ]},
+ {id:"lit", title:"Literatură", lead:"Manualul cursului, cărțile și ghidurile la care trimit prezentările, plus trei articole despre clasa inversată.", items:[
+  ["00","Manualul cursului: Psihopedagogie medicală","Notițele extinse ale prezentărilor Deck000–Deck3, cu glosar și bibliografie. Începeți cu el.","PDF · 74 de pagini · 0,6 MB","1zrpr_Sf5BZMfMsNMQJscOuq-F_9Qqt3q"],
+  ["01","ABC of Learning and Teaching in Medicine","Cantillon, Wood, Yardley (eds). Capitole scurte despre principiile învățării, predare, evaluare și feedback.","PDF · 6,5 MB","1eNUSX9A8U6NvenBJBwpPpoy2h6RWokYu"],
+  ["02","Essential Skills for a Medical Teacher","Harden, Laidlaw. Ghid practic pentru cadrul didactic: rolurile, metodele, evaluarea, curriculumul.","PDF · 15 MB","1NhfNNyNo2Abo2B330-EtA_7B-mmFc6__"],
+  ["03","Critical Thinking in Teaching and Learning","Fregni. Cum se predă și se exersează gândirea critică.","PDF · 6 MB","1IfPc4b9SoMfa87je2ESTjA7Dc-fUYiH3"],
+  ["04","AMEE Guide 14: Outcome-based education","Rezultatele învățării ca punct de plecare pentru curriculum.","PDF · 46 de pagini · 2,8 MB","1Jzg-tDC4GBnttvYABZKnQCw5hN43QjC9"],
+  ["05","AMEE Guide 20: The good teacher is more than a lecturer","Harden, Crosby (2000). Cele douăsprezece roluri ale profesorului, folosite în Deck0.","PDF · 20 de pagini · 0,9 MB","14ah_ZybOEfYIo-C7wRDTriZ5xaMQiQJa"],
+  ["06","AMEE Guide 34: Teaching in the clinical environment","Ramani, Leinster. Predarea în stagiu și la patul bolnavului.","PDF · 38 de pagini · 10,5 MB","10oCcl0cPc7CKc8FNGQjE-N7kfjUfwctK"],
+  ["07","Faculty development: yesterday, today and tomorrow","McLean, Cilliers, van Wyk. Med Teach 2008;30(6):555–584. Formarea cadrelor didactice.","PDF · 60 de pagini · 26 MB","1ul_OSXQfsD5peFJPqSJYJpHH6A-7C72U"],
+  ["08","Moving Past “Business as Usual” for Medical Education","Bowen, Abdulnour. N Engl J Med 2025;392:2472–2473. Editorialul citat în Deck4.","PDF · 0,4 MB","110DI5VprYHRphHF7ynOTwm9KQBW76jYs"],
+  ["09","Flipped Classroom Strategies in Medical Education","Mishall și colab. Med Sci Educ 2025;35(1):531–540. Recomandări pentru proiectarea unei clase inversate.","PDF · 10 pagini · 0,8 MB · recomandat de Liviu Oprea","1vPI3UFk4Gn9k8LSmwHcrfkH06sYBB21S"],
+  ["10","The Flipped Classroom in Medical Education: Systematic Review and Meta-Analysis","Spaic și colab. J Med Internet Res 2025;27:e60757. 141 de studii; cunoștințe și satisfacție, comparativ cu predarea clasică.","PDF · 24 de pagini · 2,1 MB · recomandat de Liviu Oprea","1TuEeA0TSjV9JG6KpQSaa-r2hoCwqlaXA"],
+  ["11","Flipped classrooms in undergraduate health professional education","Naing și colab. Campbell Syst Rev 2023;19(3):e1339. Recenzie sistematică, 45 de studii, certitudine scăzută a dovezilor.","PDF · 63 de pagini · 7,8 MB · recomandat de Liviu Oprea","1rxQx1EvKnmt9VvJM4ZHXl5bkRk_nJkIt"]
+ ]},
+ {id:"mat", title:"Materiale de lucru", lead:"Fișele 1, 2 și 3 sunt cele primite tipărite la curs; celelalte sunt documente de referință.", items:[
+  ["0","Fișa modulului I (DDMF)","Fișa disciplinei a acestui modul, pe același model pe care îl lucrați: obiective, program, probe, condiții de promovare.","PDF · 0,2 MB","1ldTj2Z8-LirTZQPQEZZKYVhsCR_CGSSv"],
+  ["1","Fișa de lucru: model gol și matricea de corelare","Varianta de tipărit.","PDF · 0,2 MB","1j84jWg8kRq2SbA5mP-VjY4xOoV-UUBhL"],
+  ["1","Fișa de lucru, varianta Word","Aceeași fișă, de completat pentru disciplina dumneavoastră.","Word (.docx) · editabil","1HREbLLqlikaJLcphvogGK-UQAYq_lqVq"],
+  ["2","Lista de verificare a fișei","Întrebările cu care vă verificați fișa înainte de predare.","PDF · 0,2 MB","1sDJVMKcRdnYIbF2gHBuPSioh__b6UwB5"],
+  ["3","Verbe Bloom și niveluri Miller","Verbele observabile pe niveluri și probele potrivite fiecărui nivel Miller.","PDF · 0,1 MB","1SgS4wQk98KNnt-wwOzUpsURr5lX8FmlU"],
+  ["4","Exemplu complet: fișa disciplinei Farmacologie","O fișă completă, cu rezultate, metode, probe și ponderi aliniate.","PDF · 0,2 MB","1Or4HySvyJTEoffJTEqQBW4q7exMlqRJq"],
+  ["5","Standardele specifice ARACIS 2025 pentru licență","Ce trebuie să conțină fișa disciplinei, după standardele de acreditare.","PDF · 0,6 MB","1-gAY8QRBAQBxc9EwxJYoqe_5VgZA5KRM"],
+  ["6","Exemple din alte programe","Rezultate ale învățării scrise la nivel de disciplină, din nouă discipline.","PDF · 0,1 MB","1300i5pulAfl18k6_Ldjxdzzbf4shPZJL"]
+ ]},
+ {id:"tema", title:"Tema: fișa disciplinei proprii", lead:"Fișa completă a disciplinei pe care o predați, cu matricea de corelare la final, într-un singur fișier Word. Se notează individual, cu baremul probei E2 (50 de puncte).", items:[
+  ["0","Cum construiți fișa","Ce predați, cei nouă pași, baremul, termenele și ce faceți dacă nu puteți încărca.","PDF · 2 pagini","1rsaIvJxcE2UFmErZv7xZpH-imLQ9Y56P"],
+  ["1","Fișa disciplinei proprii, modelul de completat","Fișa UMF completă (secțiunile 1–11), cu explicații la fiecare secțiune și matricea de corelare la final. Salvați-o ca Nume_Prenume_Disciplina.docx.","Word (.docx) · editabil","14CDuHIX3blVCAoqumX5LuWeDc07wGaq7"]
+ ]}
+];
+const FORM_URL = "";
+const ANNEX = [
+ ["Asistență de farmacie","1tZtmvPXvTzNpLMeeB8_mCynwV0CR9Ea0"],
+ ["Asistență de profilaxie stomatologică","1IBRGNVzEmRwwN3VAAwl44r1AVZN616oe"],
+ ["Asistență dentară","17zxZMrv9k1pP4--Vpw_e0sKQDMQyUJ60"],
+ ["Asistență medicală generală","1tLW-PiKqffwAy_49wPh5OYT0d2_Kd5E6"],
+ ["Audiologie și protezare auditivă","1I-WkuDKg2gZJg_wZMlCRRtdjsmSk3h2H"],
+ ["Balneofiziokinetoterapie și recuperare","1SAsvgUpnk-PQETur_9R7n1MVxGGU1cBu"],
+ ["Bioinginerie (Științe inginerești aplicate)","1t_Dw01_mzb2i4dZOskD4huCCfZ4jR4Jn"],
+ ["Cosmetică medicală","1FnpwSQ5UV5C-kppIEGAXHKeHNWNJEFGA"],
+ ["Farmacie","1F-d21ffY-D71jGkvyRTZELNABa3ZWaK-"],
+ ["Laborator clinic","1EkibDIhEYCg42RXgaLc-xWqtUb3j0vdr"],
+ ["Medicină","1ooES7W7XU5QCE_-v8zoGjOU4KyJ5L7YA"],
+ ["Medicină dentară","1ur1dAotINkkkMd3iz1ATr_-0j2P4Vwj3"],
+ ["Moașe","1I4nSXO1efjDm11UjamlNjk_gdtsGM81o"],
+ ["Nutriție și dietetică","1jf_OPdVTEXLUr-KIYXGrxC7LqHk7ykVh"],
+ ["Radiologie și imagistică","1SLenczO1EbgapGqzF60zV0692W3P66fl"],
+ ["Tehnică dentară","1UCjQyPtEYC_2iiU3lkj3WTEKkxtmAnrO"],
+ ["Anexa completă: domeniul Sănătate","1Znyix82um7KIdEmmZebBendYlsB2B-rU"],
+ ["Anexa completă: Științe inginerești","1nDCOKhntT8-EmddVpxbqyuJtkbfqwgyk"]
+];
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fold = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+function row(it){
+  const [no,t,d,fmt,id] = it;
+  return `<li class="file" data-k="${esc(fold(no+" "+t+" "+d+" "+fmt))}">
+    <span class="no">${esc(no)}</span>
+    <div class="body"><div class="t">${esc(t)}</div><p class="d">${esc(d)}</p><div class="fmt">${esc(fmt)}</div></div>
+    <div class="act"><a class="btn" href="${V(id)}" target="_blank" rel="noopener">Deschide</a><a class="btn" href="${D(id)}" target="_blank" rel="noopener">Descarcă</a></div>
+  </li>`;
+}
+const host = document.getElementById("sections");
+host.innerHTML = S.map(s => `<section id="${s.id}" aria-labelledby="${s.id}-h">
+  <div class="sec-head"><h2 id="${s.id}-h">${esc(s.title)}</h2><span class="count">${s.items.length} fișiere</span></div>
+  <p class="lead">${esc(s.lead)}</p>
+  <ul class="files">${s.items.map(row).join("")}</ul>
+  <p class="empty" hidden>Niciun fișier nu se potrivește căutării.</p>
+  ${s.id==="mat" ? `<div class="annex" aria-labelledby="ax-h">
+    <h3 id="ax-h" style="margin:0">Anexa 2 ARACIS: rezultatele învățării cerute pentru programul dumneavoastră</h3>
+    <div class="row">
+      <label for="ax" class="tag" style="margin:0">Program</label>
+      <select id="ax">${ANNEX.map((a,i)=>`<option value="${i}">${esc(a[0])}</option>`).join("")}</select>
+      <a class="btn" id="ax-open" target="_blank" rel="noopener">Deschide</a>
+      <a class="btn" id="ax-dl" target="_blank" rel="noopener">Descarcă</a>
+    </div>
+    <p class="d" style="color:var(--muted);font-size:14px">Dacă programul dumneavoastră nu apare în listă, folosiți anexa completă a domeniului.</p>
+  </div>` : ""}
+  ${s.id==="tema" ? `<div class="annex" aria-labelledby="tema-dl-h">
+    <h3 id="tema-dl-h" style="margin:0">Termene și predare</h3>
+    <ul class="dates">
+      <li><span class="tag">7.12.2026</span> luni: termenul de predare</li>
+      <li><span class="tag">21.12.2026</span> luni: primiți feedback</li>
+      <li><span class="tag">18.01.2027</span> luni: termenul pentru versiunea refăcută; contează ultima versiune predată</li>
+    </ul>
+    <div class="row">${FORM_URL
+      ? `<a class="btn solid" href="${FORM_URL}" target="_blank" rel="noopener">Încarcă fișa</a>`
+      : `<span class="btn" aria-disabled="true" style="opacity:.6;cursor:default">Formularul de predare se deschide pe 7 noiembrie</span>`}</div>
+    <p class="d" style="color:var(--muted);font-size:14px">Formularul cere autentificarea cu contul @umfiasi.ro. Dacă nu puteți intra, trimiteți fișierul la <code>radu.iliescu@umfiasi.ro</code>, cu subiectul „Fișa DDMF, Nume Prenume”.</p>
+  </div>` : ""}
+</section>`).join("");
+const ax = document.getElementById("ax");
+function setAx(){ const id = ANNEX[+ax.value][1]; document.getElementById("ax-open").href = V(id); document.getElementById("ax-dl").href = D(id); }
+let mi = ANNEX.findIndex(a => a[0] === "Medicină"); ax.value = String(mi < 0 ? 0 : mi); setAx();
+ax.addEventListener("change", setAx);
+const q = document.getElementById("q");
+q.addEventListener("input", () => {
+  const v = fold(q.value.trim());
+  document.querySelectorAll("#sections section").forEach(sec => {
+    let n = 0;
+    sec.querySelectorAll(".file").forEach(li => { const ok = !v || li.dataset.k.includes(v); li.hidden = !ok; if (ok) n++; });
+    sec.querySelector(".empty").hidden = n > 0;
+  });
+});
+document.querySelectorAll(".copy").forEach(b => b.addEventListener("click", () => {
+  const t = b.dataset.copy;
+  const done = () => { b.textContent = "Copiat"; setTimeout(() => b.textContent = "Copiază", 1500); };
+  try { navigator.clipboard.writeText(t).then(done, () => sel(b)); } catch(e){ sel(b); }
+}));
+function sel(b){ const c = b.previousElementSibling; const r = document.createRange(); r.selectNodeContents(c); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+</script>
+</body>
+</html>
